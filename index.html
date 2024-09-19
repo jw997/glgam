@@ -1,0 +1,899 @@
+<!doctype html>
+
+<head>
+  <!--- 
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <meta name="viewport" content="width=400">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+
+  -->
+
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+
+
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+    }
+
+    table {
+      border: 1px solid black;
+      background-color: white;
+    }
+
+    .container {
+      position: relative;
+    }
+
+    #globeViz {
+
+      width: 100svw;
+      height: 100svh;
+
+    }
+
+    .bottomleft {
+      position: absolute;
+      bottom: 30svh;
+      left: 5svw;
+      height: 24pt;
+      width: 25svw;
+    }
+
+    /*
+    .select2-results__options {
+      font-size: 16px;
+    }
+
+    .select2-selection__rendered {
+      padding: 0px 5px !important;
+    }
+
+    .select2-container .select2-selection--single {
+      height: fit-content;
+      width: 40svw;
+      /* TODO too big 
+      opacity: 0.3;
+      font-size: 16px;
+    }
+/*
+    .select2-selection__arrow {
+      height: 30px !important;
+      top: 0px !important;
+    }
+*/
+
+
+    /*
+    @media screen and (max-width: 767px) {
+
+      input,
+      select,
+      textarea {
+        font-size: 16px !important;
+      }
+    }*/
+
+    /* debugging info overlay */
+    #overlay {
+      position: fixed;
+      display: block;
+      width: 40svw;
+      height: 20svh;
+      top: 5svh;
+      left: 5svw;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    #text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-size: 16px;
+      color: white;
+      transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+  </style>
+
+
+  <script type="importmap">{ "imports": {
+    "three": "//unpkg.com/three/build/three.module.js",
+        "three/addons/": "//unpkg.com/three/examples/jsm/",
+        "tween": "//unpkg.com/@tweenjs/tween.js@23.1.3/dist/tween.esm.js"
+  }}</script>
+
+
+
+
+  <script type="module">
+    import * as THREE from "three";
+    window.THREE = THREE;
+    import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+  </script>
+
+
+
+  <script src="//unpkg.com/three-globe" defer></script>
+
+  <script src="https://unpkg.com/turf@3.0.14/turf.min.js"></script>
+
+
+
+
+
+
+
+</head>
+
+<body>
+
+  <!--
+  <div id="overlay" onclick="off()">
+    <div id="text">Overlay Text lots more text and more and more </div>
+  </div>-->
+  <div class="container">
+    <div id="globeViz"></div>
+    <!-- style="width:100svw; height:80svh" -->
+    <div class="bottomleft">
+      <table id="guessTable"></table>
+      <button id="resetbutton">Start Over</button>
+      <button id="showanswerbutton">Show Answer</button>
+
+      <!--<label for="iso-select">Choose a country:</label>-->
+
+      <select class="js-example-basic-single" name="countries" id="iso-select" style="width: auto;">
+        <option disabled selected value> -- select an option -- </option>
+
+        <!----  <option value="">--Please choose an option--</option> -->
+      </select>
+    </div>
+  </div>
+
+  <script type="module">
+
+    import { Tween, Easing } from 'tween';
+
+    // TODO
+    // DONE load both geojson and switch on geo length
+    // label country guesses
+    // restart without reloading
+    // DONE zoom based on country size
+    // add method to naviate to goal country
+    // DONE change color for each country
+    // fix layout for mobile so select is readable
+    // DONE support window resize 
+    // replace alert win /lose message with a non alert scheme
+    // switch to viewport coordinates vw vh and percentages
+
+    //  Initialize - one time 
+    // reset game state
+    //  Game Loop
+
+    $(document).ready(function () {
+      $('.js-example-basic-single').select2();
+    });
+
+    // just used for zooming
+    import { TrackballControls } from 'https://unpkg.com/three/examples/jsm/controls/TrackballControls.js';
+
+    //   const geojsonfilesmall = 'pp_110.geojson';
+    //    const geojsonfile = 'pp_50.geojson';
+    //const geojsonfile = 'pp_10.geojson';
+    //const geojsonfile = 'temp2.geojson';
+    //const geojsonfile = 'countries.geojson';
+
+    const geojsonfile = 'final.geojson';
+    async function getJson(url) {
+
+      try {
+        const response = await fetch(url, { cache: "no-cache" });  //https://hacks.mozilla.org/2016/03/referrer-and-cache-control-apis-for-fetch/
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        return json;
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
+
+    // TODO fetch both med and small scale and use small for a country if the medium has more than 1000 points 
+    // in the geometry for that country
+    // const countries_small = await getJson(geojsonfilesmall);
+
+    const countries = await getJson(geojsonfile);
+
+    const countryAltitude = 0.03;
+    const labelAltitude = countryAltitude + 0.001;
+
+    const Globe = new ThreeGlobe()
+      // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+    //  .onGlobeClick(emitArc)
+      .polygonCapColor(() => 'rgba(200, 0, 0, 0.7)')
+      .polygonSideColor(() => 'rgba(0, 200, 0, 0.1)')
+      .polygonStrokeColor(() => '#111')
+      .polygonAltitude(() => 0.03); // 0.3if zoom is less than altitude, the camera is inside the country
+    //  Globe.showGraticules(true);
+
+
+   
+
+
+    const selectElement = document.querySelector("#iso-select");
+    //    selectElement.compare = Intl.Collator(undefined).compare ;
+    // loop through features 
+    var map = new Map()
+    countries.features.forEach((element) => {
+      //console.log(element.properties.NAME, " ", element.properties.ISO_A3_EH);
+      // add it to the iso-select options
+      if (element.properties.ISO_A3_EH != "-99") {
+        //selectElement.appendChild(opt);
+        // Name is a bit brief, NAME_CIAWF can be null, NAME_SORT is ascii, NAME_LONG 
+        map.set(element.properties.NAME_LONG, element.properties.ISO_A3_EH);
+      }
+    }
+    )
+    // sort country list and populate select
+    const s = new Map([...map.entries()].sort(Intl.Collator(undefined).compare));
+
+    s.forEach(function (value, key) {
+      //  console.log(key, " ", value);
+
+      var opt = document.createElement('option');;
+      opt.value = value;
+      opt.innerHTML = key;
+      //opt.backgound = rgba(100, 100, 100, 0.3);
+      selectElement.appendChild(opt);
+
+    })
+
+    function countarrayelements(arr) {
+      if (!Array.isArray(arr))
+        return 1;
+
+      const n = arr.reduce((accum, curr) => {
+        return accum + countarrayelements(curr);
+      }, 0);
+
+      return n;
+    }
+
+    function findIndexOfCountry(c, iso) {
+      for (let i = 0; i < c.features.length; i++) {
+        if (c.features[i].properties.ISO_A3_EH == iso) {
+          return i;
+        }
+      }
+
+      return undefined;
+    }
+
+    function findPolygonAvg(poly) {
+      // poly is an array of [long, lat] pairs
+      var sum0 = 0, sum1 = 1;
+      const l = poly.length;
+
+      for (let i = 0; i < poly.length; i++) {
+        sum0 += poly[i][0];
+        sum1 += poly[i][1];
+      }
+
+      return [sum0 / l, sum1 / l];
+    }
+
+
+    /* In multipolygon, the geometry is an array of Polygons.
+    Polygons are arrays of polygons, with the outer ring in position 0, and holes in subsequent positions
+     see https://geojson.org/geojson-spec.html
+    */
+    function findLongestPoly(multiPoly) {
+      var longest = -1;
+      const l = multiPoly.length;
+      var retval = -1;
+
+      for (let i = 0; i < multiPoly.length; i++) {
+        if (multiPoly[i][0].length > longest) {
+          longest = multiPoly[i][0].length;
+          retval = i;
+        }
+      }
+      return retval;
+    }
+
+
+    function getBboxPath(feat) {
+      // bbox is bottom left, top right
+      // bbox  "bbox": [
+      // long        95.012706,
+      //   lat     -10.922621,
+      //   long      140.977627,
+      //   lat     5.910102
+      //    ],
+      // [ [lat,long,alt], ]
+
+      const bllon = feat.bbox[0];
+      const bllat = feat.bbox[1];
+      const trlon = feat.bbox[2];
+      const trlat = feat.bbox[3];
+
+      const alt = 0.02;
+      const retval = [
+        [bllat, bllon, alt], [trlat, bllon, alt], [trlat, trlon, alt], [bllat, trlon, alt], [bllat, bllon, alt]
+
+      ];
+      return retval;
+
+
+    }
+
+    function getBboxSize(feat) {
+      const area = Math.abs(feat.bbox[2] - feat.bbox[0]) * (feat.bbox[3] - feat.bbox[1]);
+      return area;
+    }
+
+    function getBboxCenter(feat) {
+      const center = [(feat.bbox[2] + feat.bbox[0]) / 2, (feat.bbox[3] + feat.bbox[1]) / 2];
+
+      if (feat.bbox[0] > 0 && feat.bbox[2] < 0) {
+        center[0] += 180;
+      }
+      return center;
+    }
+
+    // give a bbox size, pick a height above earth surface in earth radius units
+    function getZoomForSize(s) {
+
+      if (s < 1) {
+        return 0.05;
+      }
+
+      if (s < 10) {
+        return 0.1;
+      }
+      if (s < 100) {
+        return 0.5;
+      }
+      return 1.25;
+
+    }
+
+    function getLabelForSize(s) {
+
+      if (s < 1) {
+        return 0.05;
+      }
+
+      if (s < 10) {
+        return 0.1;
+      }
+      if (s < 100) {
+        return 0.5;
+      }
+      return 1.25;
+
+    }
+
+    const colors = ['#a6001a', '#633517', '#e06000', '#ee9600', '#004d33', '#00477e'];
+    //'#e97600','#f6c700','#007256','#0067a7','#964f8e'];
+
+    // colors.push(safety_colors);
+
+    var last_color = 0;
+
+    var tween;
+
+    function plotCountryGeometry(clist) {
+
+      //const won = clist.clist.length > 1 && (clist[0] == clist[clist.length -1]);
+      const won = clist.lastIndexOf(clist[0]) > 0;
+      console.log("clist ", clist);
+
+
+
+      // last county on list, we'll point the camera at it
+      const thisCountryIso = clist.slice(-1)[0];
+
+      const index = findIndexOfCountry(countries, thisCountryIso);
+
+      let targetCountry = findIndexOfCountry(countries, clist[0]);
+      let targetLoc = getBboxCenter(countries.features[targetCountry]);
+
+
+
+      // const index_small = findIndexOfCountry(countries_small, thisCountryIso);
+
+      const thisc = countries.features.filter(d => thisCountryIso == d.properties.ISO_A3_EH);
+
+      let loc = getBboxCenter(thisc[0]);
+
+      let point1 = turf.point(targetLoc);
+      let point2 = turf.point(loc);
+
+      let bear = turf.bearing(point2, point1);
+      let dist = turf.distance(point1, point2);
+
+      if (clist.length > 1) {
+        addGuessToTable(thisc[0].properties.NAME_LONG, bear, dist);
+      } else {
+        addGuessToTable("?", 0, 0);
+      }
+
+      // get lat and long and add 2 for radius
+      // const lastCBox = [...thisc[0].bbox.slice(0, 2).reverse(), 2];
+      // const coords = Globe.getCoords(...lastCBox);
+      // console.log( "1" , ...lastCBox);
+
+
+      const geo = thisc[0].geometry;
+      const n = countarrayelements(geo.coordinates);
+      // changing to just one precomputed file
+      //if (n > 5000 && !(countries.features[index] === countries_small.features[index_small])) {
+      //  countries.features[index] = countries_small.features[index_small];
+      //  console.log("For ", thisCountryIso, " reducing from ", n, " polygons");
+      //      }
+      var pt;
+      var center;
+
+      if (geo.type == "MultiPolygon") {
+        const longest = findLongestPoly(geo.coordinates)
+        pt = geo.coordinates[0][0][0];
+        center = findPolygonAvg(geo.coordinates[longest][0]);
+      }
+      if (geo.type == "Polygon") {
+        pt = geo.coordinates[0][0];
+        center = findPolygonAvg(geo.coordinates[0]);
+      }
+
+      if (null == pt) {
+        alert("pt not defined");
+
+      }
+
+      console.log("center is ", center);
+      console.log("geometry length is ", thisc[0].properties.NAME_LONG, n);
+
+      // compute bbox size for zoom
+      const bboxsize = getBboxSize(thisc[0]);
+      const rad = getZoomForSize(bboxsize);
+
+      console.log("bbox area is ", thisc[0].properties.NAME_LONG, bboxsize, rad);
+      // try bbox for center instead
+
+      center = getBboxCenter(thisc[0]);
+
+
+      const coords = Globe.getCoords(center[1], center[0], rad);
+
+      console.log("move camera to ", center, rad);
+      console.log("move camera to coords ", coords);
+
+
+      // try center of biggets polygon bounding box
+
+      // try label position, not all countries have it, i.e. Russia, USA
+      //const coords = Globe.getCoords(1+thisc[0].properties.LABEL_Y,  1+thisc[0].properties.LABEL_X, rad);
+
+      // this line moves the camera to be over the newly selected country in one jump
+      //camera.position.copy(coords);
+      // replace it with a tween for a smooth animation to the new location
+
+      // const tween_coords = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+      // geo coords have altitude lat lng
+      const start_tween = Globe.toGeoCoords({ x: camera.position.x, y: camera.position.y, z: camera.position.z });
+      const end_tween = { lng: center[0], lat: center[1], altitude: rad };
+
+      // if longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
+      if (start_tween.lng * end_tween.lng < 0) {
+        if (Math.abs(end_tween.lng - start_tween.lng) > 180) {
+          if (end_tween.lng < 0) {
+            end_tween.lng += 360;
+          } else {
+            start_tween.lng += 360;
+          }
+        }
+
+      }
+      console.log("end+tween ", end_tween);
+      const tween_coords = start_tween;
+
+
+      //  TODO 
+      //  go short way across date line vanuata, french polynesia
+      // fly higher in the middle with chain?
+
+      // global tween
+      tween = new Tween(tween_coords)
+        .easing(Easing.Quadratic.InOut)
+        .to(end_tween)
+        .onUpdate(() => {
+          const coords = Globe.getCoords(tween_coords.lat, tween_coords.lng, tween_coords.altitude);
+          if (isNaN(coords.x)) {
+            console.log(tween_coords, coords);
+          }
+          camera.position.set(coords.x, coords.y, coords.z);
+          //  console.log(" tween updated  new camera poistion is ", camera.position);
+        }
+        );
+
+      tween.start();
+
+
+
+      console.log(thisc[0].properties.NAME_LONG, " ", coords);
+
+      // all countries on list, we'll set the globe polygon data with these
+      const c = countries.features.filter(d => clist.includes(d.properties.ISO_A3_EH));
+
+      // give each country a color
+
+      /* https://www.w3schools.com/colors/colors_fs595.asp
+            (10055)	w3-highway-brown	#633517
+      (11086)	w3-highway-red	#a6001a
+      (12243)	w3-highway-orange	#e06000
+      (13415)	w3-highway-schoolbus	#ee9600
+      (13507)	w3-highway-yellow	#ffab00
+      (14066)	w3-highway-green	#004d33
+      (15065)	w3-highway-blue	#00477e
+      */
+      /*
+(11120)	w3-safety-red 	#bd1e24
+(12300)	w3-safety-orange 	#e97600
+(13591)	w3-safety-yellow 	#f6c700
+(14120)	w3-safety-green 	#007256
+(15092)	w3-safety-blue 	#0067a7
+(17155)	w3-safety-purple 	#964f8e
+      */
+
+      for (let i = 0; i < c.length; i++) {
+        if (undefined == c[i].color) {
+          //c[i].color = colors[Math.round(Math.random() * colors.length)];
+          c[i].color = colors[last_color];
+          last_color = 1 + (last_color + 1) % (colors.length - 1);  // Save red for target
+
+          console.log(c[i].properties.NAME_LONG, " ", c[i].color);
+
+
+        }
+      }
+      Globe.polygonsData(c).polygonCapColor('color');
+      /* not defined 
+      const colorScale = d3.scaleSequentialSqrt(d3.interpolateYlOrRd);
+
+// GDP per capita (avoiding countries with small pop)
+const getVal = feat => feat.properties.GDP_MD_EST / Math.max(1e5, feat.properties.POP_EST);
+
+      Globe.polygonsData(c).polygonCapColor('color');
+
+      Globe.polygonLabel(({ properties: d }) => `
+          <b>${d.ADMIN} (${d.ISO_A2}):</b> <br />
+          GDP: <i>${d.GDP_MD_EST}</i> M$<br/>
+          Population: <i>${d.POP_EST}</i>
+        `)
+        .onPolygonHover(hoverD => world
+          .polygonAltitude(d => d === hoverD ? 0.12 : 0.06)
+          .polygonCapColor(d => d === hoverD ? 'steelblue' : colorScale(getVal(d)))
+        )
+        .polygonsTransitionDuration(300);
+*/
+      // label each country
+      const labelData = [];
+
+      console.log("c ", c);
+
+      for (let i = 0; i < c.length; i++) {
+        const loc = getBboxCenter(c[i]);
+
+        // compute bbox size for zoom
+        const bboxsize = getBboxSize(c[i]);
+        const labelSize = getLabelForSize(bboxsize);
+
+        const asciiName = c[i].properties.NAME_LONG.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        // if (i == 0 && c.length>1) {
+        //   addGuessToTable(asciiName);
+        // }
+
+        labelData.push({ "lat": loc[1], "lng": loc[0] + 0.4, size: labelSize, color: 'white', name: asciiName });
+
+        if (!won && c[i].properties.ISO_A3_EH == clist[0]) {
+          // erase the name
+          labelData[i].name = '?';
+        }
+      }
+
+      Globe.labelsData(labelData)
+        .labelText('name')
+        .labelSize('size')
+        .labelDotRadius(0)
+        .labelAltitude(labelAltitude)
+        .labelColor('color');
+
+      // .labelTypeFace('tf');  // https://github.com/vasturiano/globe.gl/issues/26
+
+    };
+
+    // Game State
+    // pick target country 
+    // retrieve array of old guesses
+    // history is a string of comma separated ISO A3 3 letter codes
+
+    const item_history = "History";
+
+    let hist_string = localStorage.getItem(item_history);
+    if (hist_string == null) {
+      hist_string=""
+    }
+
+   
+    do {
+      var answer_idx = Math.floor(Math.random() * s.size)
+      var answer = Array.from(s.values())[answer_idx];
+    } while (hist_string.indexOf(answer) != -1);
+
+    // save the new History, but only the last X entries
+    // 
+
+    const hist_limit = 100;
+    if (hist_string.length > (4* hist_limit)) {
+      hist_string = hist_string.substring(4);
+
+    }
+    hist_string += ' ';
+    hist_string += answer;
+    localStorage.setItem(item_history,hist_string);
+
+
+    var answer_name = Array.from(s.keys())[answer_idx];
+    var countryList = [answer];
+
+    function resetGameState() {
+      answer_idx = Math.floor(Math.random() * s.size)
+      answer = Array.from(s.values())[answer_idx];
+      answer_name = Array.from(s.keys())[answer_idx];
+      countryList = [answer];
+      last_color = 0;
+
+      // clear guess table
+      let table = document.getElementById("guessTable");
+      while (table.rows[0]) table.deleteRow(0);
+
+      // clear color assignments
+
+
+
+      countries.features.forEach((element) => {
+        delete element.color;
+      });
+      plotCountryGeometry(countryList);
+    }
+
+    // window.onload = function() {
+    document.getElementById('resetbutton').onclick = function () { resetGameState() };
+    // }
+
+    function directionSymbol(bear) {
+      // north is 0
+      // east is 90
+      // west is -90
+      // south is +-180
+
+      // up U+2191
+      // down U+2193
+      // left U+2190
+      // right U+2192
+      // upright U+2197
+      // downright  U+2198
+
+      // downleft U+2199
+      // upleft  U+2196
+
+      let index = Math.round(bear / 45) + 4
+      let symbolArray = ["\u{2193}", "\u{2199}", "\u{2190}", "\u{2196}", "\u{2191}",
+        "\u{2197}", "\u{2192}", "\u{2198}", "\u{2193}"];
+      let retval = symbolArray[index];
+      return retval;
+    }
+    function addGuessToTable(id, bear, dist) {
+      let table = document.getElementById("guessTable");
+
+      // Add row to end of table
+      let newRow = table.insertRow();
+
+      let nameCell = newRow.insertCell(0);
+      let distCell = newRow.insertCell(1);
+      let bearCell = newRow.insertCell(2);
+
+
+
+
+      nameCell.innerHTML = id;
+      bearCell.innerHTML = directionSymbol(Math.round(bear));
+      distCell.innerHTML = Math.round(dist);
+    }
+
+
+    var $eventSelect = $(".js-example-basic-single");
+    // make it wide enough
+    $('#iso-select').select2({ dropdownAutoWidth: true });
+
+    $eventSelect.on("change", function (e) { handleChange("change"); });
+
+    // Loop to handle user input
+    // get the ISO_A3 code from the input
+    // check if it is the country we are looking for -- WIN
+    // check if too many guesses -- LOSE
+    // 
+    // call plot to draw countries
+    function handleChange(name, evt) {
+      const v1 = $('#iso-select').select2('data');
+      const id = v1[0].id;
+
+      countryList.push(id);
+
+
+
+      if (id == countryList[0]) {
+        //   alert("You win!");
+        var audio = new Audio('success.mp3');
+        audio.play();
+      }
+      /*
+            if (countryList.length > 6) {
+             // Globe.showGraticules(true);
+              const msg = "you lose it was ".concat(answer_name);
+              //   alert(msg);
+      
+            }*/
+
+      plotCountryGeometry(countryList);
+
+    }
+
+
+    // Setup renderer
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    document.getElementById('globeViz').appendChild(renderer.domElement);
+
+    // save the canvas
+    const canvas = document.getElementById('globeViz').childNodes[0];
+
+    // Setup scene
+    const scene = new THREE.Scene();
+    scene.add(Globe);
+    scene.add(new THREE.AmbientLight(0xcccccc, Math.PI));
+    scene.add(new THREE.DirectionalLight(0xffffff, 0.6 * Math.PI));
+
+    const axesHelper = new THREE.AxesHelper(200);
+    //  scene.add(axesHelper);
+
+    // Setup camera
+    const camera = new THREE.PerspectiveCamera();
+    camera.aspect = window.innerWidth / (window.innerHeight);
+    camera.updateProjectionMatrix();
+    camera.position.z = 300;
+    camera.position.x = 300;
+    camera.position.y = 300;
+
+
+
+    // Add camera controls
+    const tbControls = new TrackballControls(camera, renderer.domElement);
+    //const tbControls = new OrbitControls(camera, renderer.domElement);
+
+    tbControls.minDistance = 101;
+    tbControls.rotateSpeed = 5;
+    tbControls.zoomSpeed = 0.8;
+    tbControls.noPan = true;
+    tbControls.noRotate = true;
+    // tbControls.minDistance =1
+    //tbControls.maxDistance = 5000;
+
+    document.getElementById('resetbutton').onclick = function () { resetGameState() };
+
+
+    document.getElementById('showanswerbutton').onclick = function () {
+      countryList.push(answer);
+
+
+      var audio = new Audio('success.mp3');
+      audio.play();
+
+
+      plotCountryGeometry(countryList);
+    }
+
+
+    plotCountryGeometry(countryList);
+
+    var lastWindowWidth = 0;
+    var lastWindowHeight = 0;
+    var lastCanvasWidth = 0;
+    var lastCanvasHeight = 0;
+
+    var nResize = 0;
+
+    // debug info about screen dimensions and resizing
+    let dims = [];
+    function getDims() {
+      return [
+        " canvas ",
+        canvas.clientWidth,
+        canvas.clientHeight,
+        " window ",
+        window.innerWidth,
+        window.innerHeight,
+        " camera aspect ratio",
+        camera.aspect.toFixed(2),
+        " document ",
+        document.documentElement.clientWidth,
+        document.documentElement.clientHeight
+        /*
+        window.visualViewport?.width ||
+        window.innerWidth ||
+        document.documentElement.clientWidth ||
+        document.body.clientWidth,
+        window.visualViewport?.height ||
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight*/
+      ];
+    }
+    // setInterval(function () { document.getElementById("text").innerHTML = getDims(canvas) }, 1000);
+
+    function resizeCanvasToDisplaySize(canvas) {
+      if (lastCanvasHeight == canvas.clientHeight &&
+        lastCanvasWidth == canvas.clientWidth &&
+        lastWindowWidth == window.innerWidth &&
+        lastWindowHeight == window.innerHeight) {
+        // nothing to do
+        return;
+      }
+      nResize++;
+
+      // Lookup the size the browser is displaying the canvas in CSS pixels.
+      //  console.log("Window wxh ", window.innerWidth, " ", window.innerHeight);
+      //  console.log("canvas client dims ", canvas.clientWidth, canvas.clientHeight);
+
+      //  console.log("dpi ", window.devicePixelRatio);
+      //  console.log("camera aspect ", camera.aspect);
+
+      // https://stackoverflow.com/questions/45041158/resizing-canvas-webgl-to-fit-screen-width-and-heigh
+      // TODO use canvas.clientWidth and height instead of window?
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+
+      return;
+
+    }
+
+
+
+    (function animate(time) { // IIFE
+      // Frame cycle
+      tween.update(time);
+      tbControls.update();
+      //  resizeCanvasToDisplaySize(canvas);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+      // TWEEN.update(time);
+    })();
+    // remove fetch });
+  </script>
+</body>
