@@ -12,5 +12,4 @@ async function getJson(url) {
 	}
 }
 
-
-export { getJson};
+export {getJson};
