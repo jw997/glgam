@@ -2,6 +2,8 @@ import {Tween, Easing} from 'tween';
 // Just used for zooming
 import {TrackballControls} from 'https://unpkg.com/three/examples/jsm/controls/TrackballControls.js';
 
+import {OrbitControls} from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
+
 // DONE load both geojson and switch on geo length
 // label country guesses
 // restart without reloading
@@ -453,6 +455,37 @@ camera.position.x = 300;
 camera.position.y = 300;
 
 // Add camera controls
+
+function _getTrackBallControls( cam, dom) {
+	const control = new TrackballControls(camera, renderer.domElement);
+	// Const tbControls = new OrbitControls(camera, renderer.domElement);
+	
+	control.minDistance = 101;
+	control.rotateSpeed = 5;
+	control.zoomSpeed = 0.8;
+	control.noPan = true;
+	control.noRotate = false;
+	return control;
+
+}
+
+function getOrbitControls( cam, dom) {
+
+	const control = new OrbitControls(camera, renderer.domElement);
+	// change rotate speed according to zoom factor?
+	control.minDistance = 101;
+	control.rotateSpeed = 0.5;
+	control.zoomSpeed = 0.3;
+	control.enablePan = false;
+	control.noRotate = false;
+	control.enableDamping = true;
+	return control;
+
+}
+//const tbControls = getTrackBallControls(camera, renderer.domElement);
+
+const tbControls = getOrbitControls(camera, renderer.domElement);
+/*
 const tbControls = new TrackballControls(camera, renderer.domElement);
 // Const tbControls = new OrbitControls(camera, renderer.domElement);
 
@@ -460,9 +493,10 @@ tbControls.minDistance = 101;
 tbControls.rotateSpeed = 5;
 tbControls.zoomSpeed = 0.8;
 tbControls.noPan = true;
-tbControls.noRotate = true;
+tbControls.noRotate = false;
 // TbControls.minDistance =1
 // tbControls.maxDistance = 5000;
+*/
 
 document.querySelector('#resetbutton').addEventListener('click', () => {
 	resetGameState();
