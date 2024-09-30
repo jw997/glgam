@@ -25,22 +25,22 @@ $(document).ready(() => {
 	$('.js-example-basic-single').select2();
 });
 
-import {getJson} from "./utils_helper.js";
+import {getJson, enlargePolygon} from "./utils_helper.js";
 
 const geojsonfile = './data/final.geojson';
 const countries = await getJson(geojsonfile);
 
 // Make the labels appear above the country, but under the camera
-const countryAltitude = 0.03;
+const countryAltitude = 0.003;
 const labelAltitude = countryAltitude + 0.001;
 
 const Globe = new ThreeGlobe()
 	// .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
 	//  .onGlobeClick(emitArc)
 	.polygonCapColor(() => 'rgba(200, 0, 0, 0.7)')
-	.polygonSideColor(() => 'rgba(0, 200, 0, 0.1)')
+	.polygonSideColor(() => 'rgba(0, 0, 0, 0.1)')
 	.polygonStrokeColor(() => '#111')
-	.polygonAltitude(() => countryAltitude); // 0.3if zoom is less than altitude, the camera is inside the country
+	.polygonAltitude(() => countryAltitude); // 0.3 if zoom is less than altitude, the camera is inside the country
 //  Globe.showGraticules(true);
 
 const selectElement = document.querySelector('#iso-select');
@@ -54,7 +54,7 @@ for (const element of countries.features) {
 		// SelectElement.appendChild(opt);
 		// Name is a bit brief, NAME_CIAWF can be null, NAME_SORT is ascii, NAME_LONG
 		map.set(element.properties.NAME_LONG, element.properties.ISO_A3_EH);
-		console.info('sed s/', element.properties.NAME_LONG, '/', element.properties.ISO_A3_EH, '/');
+		// Xconsole.info('sed s/', element.properties.NAME_LONG, '/', element.properties.ISO_A3_EH, '/');
 	}
 }
 
@@ -174,6 +174,8 @@ function plotCountryGeometry(clist) {
 
 	const thisc = countries.features.find(d => thisCountryIso === d.properties.ISO_A3_EH);
 
+	thisc.altitude = countryAltitude;
+
 	const loc = getBboxCenter(thisc);
 
 	const point1 = turf.point(targetLoc);
@@ -192,6 +194,31 @@ function plotCountryGeometry(clist) {
 	// Compute bbox size for zoom
 	const bboxsize = getBboxSize(thisc);
 	const rad = getZoomForSize(bboxsize);
+
+	// try enlarge
+
+	if (geo.type == "Polygon") {
+	   const bigPoly = enlargePolygon( geo.coordinates[0]);
+	   bigPoly.fake = true;
+	   bigPoly.color = '#d3d3d3';
+	   bigPoly.bbox = thisc.bbox;
+	   bigPoly.properties.NAME_LONG = "";
+	   bigPoly.altitude = countryAltitude - 0.00001;
+
+	   countries.features.push(bigPoly);
+	}
+	if (geo.type == "MultiPolygon") {
+		for (let i =0; i < geo.coordinates.length; i++ ) {
+			const bigPoly = enlargePolygon( geo.coordinates[i][0]);
+			bigPoly.fake = true;
+			bigPoly.color = '#d3d3d3';
+			bigPoly.bbox = thisc.bbox;
+			bigPoly.properties.NAME_LONG = "";
+			bigPoly.altitude = 0.002;
+	
+			countries.features.push(bigPoly);
+		}
+	 }
 
 	console.log('bbox area is', thisc.properties.NAME_LONG, bboxsize, rad);
 	// Try bbox for center instead
@@ -241,7 +268,7 @@ function plotCountryGeometry(clist) {
 	console.log(thisc.properties.NAME_LONG, ' ', coords);
 
 	// All countries on list, we'll set the globe polygon data with these
-	const c = countries.features.filter(d => clist.includes(d.properties.ISO_A3_EH));
+	const c = countries.features.filter(d => ( clist.includes(d.properties.ISO_A3_EH) || d.fake));
 
 	// Give each country a color
 	for (const element of c) {
@@ -255,6 +282,8 @@ function plotCountryGeometry(clist) {
 	}
 
 	Globe.polygonsData(c).polygonCapColor('color');
+
+	Globe.polygonsData(c).polygonAltitude('altitude');
 
 	// label each country
 	const labelData = [];
