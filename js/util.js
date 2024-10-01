@@ -31,16 +31,16 @@ const geojsonfile = './data/final.geojson';
 const countries = await getJson(geojsonfile);
 
 // Make the labels appear above the country, but under the camera
-const countryAltitude = 0.03;
+const countryAltitude = 0.003;
 const labelAltitude = countryAltitude + 0.001;
 
 const Globe = new ThreeGlobe()
 	// .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
 	//  .onGlobeClick(emitArc)
 	.polygonCapColor(() => 'rgba(200, 0, 0, 0.7)')
-	.polygonSideColor(() => 'rgba(0, 200, 0, 0.1)')
+	.polygonSideColor(() => 'rgba(0, 0, 0, 0.1)')
 	.polygonStrokeColor(() => '#111')
-	.polygonAltitude(() => countryAltitude); // 0.3if zoom is less than altitude, the camera is inside the country
+	.polygonAltitude(() => countryAltitude); // 0.3 if zoom is less than altitude, the camera is inside the country
 //  Globe.showGraticules(true);
 
 const selectElement = document.querySelector('#iso-select');
@@ -54,7 +54,7 @@ for (const element of countries.features) {
 		// SelectElement.appendChild(opt);
 		// Name is a bit brief, NAME_CIAWF can be null, NAME_SORT is ascii, NAME_LONG
 		map.set(element.properties.NAME_LONG, element.properties.ISO_A3_EH);
-		console.info('sed s/', element.properties.NAME_LONG, '/', element.properties.ISO_A3_EH, '/');
+		// Xconsole.info('sed s/', element.properties.NAME_LONG, '/', element.properties.ISO_A3_EH, '/');
 	}
 }
 
@@ -155,7 +155,8 @@ const colorsHighway = ['#a6001a', '#633517', '#e06000', '#ee9600', '#004d33', '#
 
 let lastColor = 0;
 
-let tween;
+let tweenOne;
+let tweenTwo;
 
 function plotCountryGeometry(clist) {
 	// Const won = clist.clist.length > 1 && (clist[0] === clist[clist.length -1]);
@@ -173,6 +174,8 @@ function plotCountryGeometry(clist) {
 	// Const index_small = findIndexOfCountry(countries_small, thisCountryIso);
 
 	const thisc = countries.features.find(d => thisCountryIso === d.properties.ISO_A3_EH);
+
+	thisc.altitude = countryAltitude;
 
 	const loc = getBboxCenter(thisc);
 
@@ -205,8 +208,10 @@ function plotCountryGeometry(clist) {
 
 	// geo coords have altitude lat lng
 	const startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
+	
 	const endTween = {lng: center[0], lat: center[1], altitude: rad};
 
+	const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
 	// If longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
 	if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
 		if (endTween.lng < 0) {
@@ -221,27 +226,37 @@ function plotCountryGeometry(clist) {
 
 	// Fly higher in the middle with chain?
 	// global tween
-	tween = new Tween(tweenCoords)
+	 tweenOne = new Tween(tweenCoords)
 		.easing(Easing.Quadratic.InOut)
-		.to(endTween)
+		.to(midTween)
 		.onUpdate(() => {
 			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
-			// What to check for?
-			if (Number.isNaN(coords.x)) {
-				console.log(tweenCoords, coords);
-			}
-
 			camera.position.set(coords.x, coords.y, coords.z);
-			//  Console.log(' tween updated  new camera poistion is ', camera.position);
+		    //console.log(' tween updated  new camera poistion is ', camera.position);
 		},
 		);
 
-	tween.start();
+	 tweenTwo = new Tween(tweenCoords)
+	.easing(Easing.Quadratic.InOut)
+	//.to(midTween)
+	//.chain(midTween)
+	.easing(Easing.Quadratic.InOut)
+	.delay(200)
+	.to(endTween)
+	.onUpdate(() => {
+		const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+		camera.position.set(coords.x, coords.y, coords.z);
+		//console.log(' tween updated  new camera poistion is ', camera.position);
+	},
+	);
+
+	tweenOne.chain(tweenTwo);
+	tweenOne.start();
 
 	console.log(thisc.properties.NAME_LONG, ' ', coords);
 
 	// All countries on list, we'll set the globe polygon data with these
-	const c = countries.features.filter(d => clist.includes(d.properties.ISO_A3_EH));
+	const c = countries.features.filter(d => ( clist.includes(d.properties.ISO_A3_EH) || d.fake));
 
 	// Give each country a color
 	for (const element of c) {
@@ -255,6 +270,8 @@ function plotCountryGeometry(clist) {
 	}
 
 	Globe.polygonsData(c).polygonCapColor('color');
+
+	Globe.polygonsData(c).polygonAltitude('altitude');
 
 	// label each country
 	const labelData = [];
@@ -515,7 +532,8 @@ plotCountryGeometry(countryList);
 
 function animate(time) {// IIFE
 	// Frame cycle
-	tween.update(time);
+	tweenOne.update(time);
+	tweenTwo.update(time);
 	tbControls.update();
 	//  ResizeCanvasToDisplaySize(canvas);
 	renderer.render(scene, camera);
