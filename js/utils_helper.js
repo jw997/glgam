@@ -43,4 +43,38 @@ function enlargePolygon(poly) {
 	return feature;
 }
 
+
+function _Broken_enlargePolygon(poly) {
+	const polygon = turf.polygon([poly]); // array of linear rings
+	//const centroid = turf.centroid(polygon);
+
+	let newPoly = [];
+
+	for (let i =0; i < poly.length-1; i++ ) {
+		const pt = turf.point(poly[i]);
+
+		const prev = turf.point(poly[(i+ poly.length - 1) % poly.length]);
+		const next = turf.point(poly[(i+1) % poly.length]);
+
+		const tan = turf.bearing( prev, next);
+
+		const bearing = tan + 90;
+		const newPoint = turf.transformTranslate(pt, 1, bearing); // 10km
+		newPoly.push(newPoint.geometry.coordinates);
+	}
+	// push the matching last point
+	newPoly.push( newPoly[0]);
+	const geometry = {
+		type: "Polygon",
+		//coordinates: [ newPoly, poly] donut
+		coordinates: [ newPoly]
+	  };
+
+	var feature = turf.feature(geometry);
+	// steal the bbox, even though it is a bit small
+	feature.bbox = polygon.bbox;
+  
+	return feature;
+}
+
 export {getJson, enlargePolygon};

@@ -155,7 +155,8 @@ const colorsHighway = ['#a6001a', '#633517', '#e06000', '#ee9600', '#004d33', '#
 
 let lastColor = 0;
 
-let tween;
+let tweenOne;
+let tweenTwo;
 
 function plotCountryGeometry(clist) {
 	// Const won = clist.clist.length > 1 && (clist[0] === clist[clist.length -1]);
@@ -196,7 +197,7 @@ function plotCountryGeometry(clist) {
 	const rad = getZoomForSize(bboxsize);
 
 	// try enlarge
-
+/*
 	if (geo.type == "Polygon") {
 	   const bigPoly = enlargePolygon( geo.coordinates[0]);
 	   bigPoly.fake = true;
@@ -219,7 +220,7 @@ function plotCountryGeometry(clist) {
 			countries.features.push(bigPoly);
 		}
 	 }
-
+*/
 	console.log('bbox area is', thisc.properties.NAME_LONG, bboxsize, rad);
 	// Try bbox for center instead
 
@@ -232,8 +233,10 @@ function plotCountryGeometry(clist) {
 
 	// geo coords have altitude lat lng
 	const startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
+	
 	const endTween = {lng: center[0], lat: center[1], altitude: rad};
 
+	const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
 	// If longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
 	if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
 		if (endTween.lng < 0) {
@@ -248,22 +251,32 @@ function plotCountryGeometry(clist) {
 
 	// Fly higher in the middle with chain?
 	// global tween
-	tween = new Tween(tweenCoords)
+	 tweenOne = new Tween(tweenCoords)
 		.easing(Easing.Quadratic.InOut)
-		.to(endTween)
+		.to(midTween)
 		.onUpdate(() => {
 			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
-			// What to check for?
-			if (Number.isNaN(coords.x)) {
-				console.log(tweenCoords, coords);
-			}
-
 			camera.position.set(coords.x, coords.y, coords.z);
-			//  Console.log(' tween updated  new camera poistion is ', camera.position);
+		    //console.log(' tween updated  new camera poistion is ', camera.position);
 		},
 		);
 
-	tween.start();
+	 tweenTwo = new Tween(tweenCoords)
+	.easing(Easing.Quadratic.InOut)
+	//.to(midTween)
+	//.chain(midTween)
+	.easing(Easing.Quadratic.InOut)
+	.delay(200)
+	.to(endTween)
+	.onUpdate(() => {
+		const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+		camera.position.set(coords.x, coords.y, coords.z);
+		//console.log(' tween updated  new camera poistion is ', camera.position);
+	},
+	);
+
+	tweenOne.chain(tweenTwo);
+	tweenOne.start();
 
 	console.log(thisc.properties.NAME_LONG, ' ', coords);
 
@@ -544,7 +557,8 @@ plotCountryGeometry(countryList);
 
 function animate(time) {// IIFE
 	// Frame cycle
-	tween.update(time);
+	tweenOne.update(time);
+	tweenTwo.update(time);
 	tbControls.update();
 	//  ResizeCanvasToDisplaySize(canvas);
 	renderer.render(scene, camera);
