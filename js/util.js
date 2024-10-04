@@ -201,7 +201,9 @@ function plotCountryGeometry(clist) {
 
 	const center = getBboxCenter(thisc);
 
-	const coords = Globe.getCoords(center[1], center[0], rad);
+	const coords = Globe.getCoords(center[1], center[0], rad);  // lat, lng, altitude
+	// stash the camera coords 
+	thisc.cameraCoords = coords;
 
 	console.log('move camera to', center, rad);
 	console.log('move camera to coords', coords);
@@ -337,7 +339,132 @@ histString += answer;
 localStorage.setItem(itemHistory, histString);
 
 // Let answer_name = Array.from(s.keys())[answer_index];
-let countryList = [answer];
+let 
+countryList = [answer];
+
+let tourTweens = [];  // needed by animate
+
+function tour() {
+	// get coords for all the countries in the list, and go visit all of them
+	// coordArray entries have  lat, lng, altitude
+	let coordArray = []
+	console.log(countryList);
+	for(let i =0; i < countryList.length; i++) {
+		const country = countries.features.find(d => countryList[i] === d.properties.ISO_A3_EH);
+        const cameraCoords = country.cameraCoords;
+		console.log ("tour " ,country.properties.NAME_LONG, country.cameraCoords);
+		const geocoords = Globe.toGeoCoords({x: cameraCoords.x, y: cameraCoords.y, z: cameraCoords.z});
+		console.log(geocoords);
+		coordArray.push( geocoords);
+		// country.cameraCoords is xyz
+	}
+	// visit the target at the end, too
+	coordArray.push( coordArray[0]);
+
+	let coords; 
+
+	let startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
+	const tweenCoords = startTween;
+
+	tourTweens = [] // empty out tweeens from last time!
+
+	for(let i =0; i < coordArray.length; i++) {
+		//const dest = coordArray[i];
+		const endTween = coordArray[i];
+		const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4};
+
+		if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
+			if (endTween.lng < 0) {
+				endTween.lng += 360;
+			} else {
+				startTween.lng += 360;
+			}
+		}
+
+		
+
+		const tween = new Tween(tweenCoords)
+		
+		.easing(Easing.Quadratic.InOut)
+		.to(endTween,2500)
+		.onUpdate(() => {
+			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+
+			console.debug(' tween ', i , ' updated  new poistion is ', tweenCoords);
+
+			camera.position.set(coords.x, coords.y, coords.z);
+			console.debug(' tween ', i , ' updated  new camera poistion is ', camera.position);
+		},
+		);
+
+        tourTweens.push(tween);
+		console.log( "created a tween from ", startTween, " to ", endTween);
+
+		startTween = endTween;  // set it for next loop
+
+	}
+
+	// now chain the tweens in the array
+	for(let i =0; i < tourTweens.length-1; i++) {
+		tourTweens[i].chain( tourTweens[i+1]);
+	}
+
+	tourTweens[0].start();
+	
+
+	/*
+
+		// geo coords have altitude lat lng
+		//const startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
+	
+		const endTween = {lng: center[0], lat: center[1], altitude: rad};
+	
+		const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
+		// If longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
+		if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
+			if (endTween.lng < 0) {
+				endTween.lng += 360;
+			} else {
+				startTween.lng += 360;
+			}
+		}
+	
+		console.log('end+tween', endTween);
+		const tweenCoords = startTween;
+	
+		// Fly higher in the middle with chain?
+		// global tween
+		 tweenOne = new Tween(tweenCoords)
+			.easing(Easing.Quadratic.InOut)
+			.to(midTween)
+			.onUpdate(() => {
+				const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+				camera.position.set(coords.x, coords.y, coords.z);
+				//console.log(' tween updated  new camera poistion is ', camera.position);
+			},
+			);
+	
+		 tweenTwo = new Tween(tweenCoords)
+		.easing(Easing.Quadratic.InOut)
+		//.to(midTween)
+		//.chain(midTween)
+		.easing(Easing.Quadratic.InOut)
+		.delay(200)
+		.to(endTween)
+		.onUpdate(() => {
+			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+			camera.position.set(coords.x, coords.y, coords.z);
+			//console.log(' tween updated  new camera poistion is ', camera.position);
+		},
+		);
+	
+		tweenOne.chain(tweenTwo);
+		tweenOne.start();
+
+
+*/
+
+}
 
 function resetGameState() {
 	answerIndex = Math.floor(Math.random() * s.size);
@@ -515,6 +642,11 @@ tbControls.noRotate = false;
 // tbControls.maxDistance = 5000;
 */
 
+
+document.querySelector('#tourButton').addEventListener('click', () => {
+	tour();
+});
+
 document.querySelector('#resetbutton').addEventListener('click', () => {
 	resetGameState();
 });
@@ -532,6 +664,7 @@ plotCountryGeometry(countryList);
 
 function animate(time) {// IIFE
 	// Frame cycle
+	tourTweens.forEach( t => t.update(time));
 	tweenOne.update(time);
 	tweenTwo.update(time);
 	tbControls.update();
