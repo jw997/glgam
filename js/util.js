@@ -253,12 +253,14 @@ function plotCountryGeometry(clist) {
 	.onComplete(() => {
 		console.log("Move animating done");
 		animatingMove = false;
+		enableRotate(true); 
 	}
 	);
 
 	tweenOne.chain(tweenTwo);
 
     animatingMove = true;
+	enableRotate(false);  // disable user globe rotation while we animate the move
 	tweenOne.start();
 
 	console.log(thisc.properties.NAME_LONG, ' ', coords);
@@ -428,15 +430,10 @@ function tour() {
 		);
 		if ((coordArray.length-1)==i) {
 			tween.onComplete(() => {
-				//animatingTour = false;
+				animatingTour = false;
+				enableRotate(true); 
 				console.log("Animating tour completed")
 			})
-		}
-
-		;
-
-		if (coordArray.length - 1 == i) {
-			tween.onComplete = () => {animatingTour = false; console.log("Animating tour completed")}
 		}
 
 		if (startTween != endTween) {
@@ -456,58 +453,6 @@ function tour() {
 
 	tourTweens[0].start();
 	
-
-	/*
-
-		// geo coords have altitude lat lng
-		//const startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
-	
-		const endTween = {lng: center[0], lat: center[1], altitude: rad};
-	
-		const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
-		// If longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
-		if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
-			if (endTween.lng < 0) {
-				endTween.lng += 360;
-			} else {
-				startTween.lng += 360;
-			}
-		}
-	
-		console.log('end+tween', endTween);
-		const tweenCoords = startTween;
-	
-		// Fly higher in the middle with chain?
-		// global tween
-		 tweenOne = new Tween(tweenCoords)
-			.easing(Easing.Quadratic.InOut)
-			.to(midTween)
-			.onUpdate(() => {
-				const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
-				camera.position.set(coords.x, coords.y, coords.z);
-				//console.log(' tween updated  new camera poistion is ', camera.position);
-			},
-			);
-	
-		 tweenTwo = new Tween(tweenCoords)
-		.easing(Easing.Quadratic.InOut)
-		//.to(midTween)
-		//.chain(midTween)
-		.easing(Easing.Quadratic.InOut)
-		.delay(200)
-		.to(endTween)
-		.onUpdate(() => {
-			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
-			camera.position.set(coords.x, coords.y, coords.z);
-			//console.log(' tween updated  new camera poistion is ', camera.position);
-		},
-		);
-	
-		tweenOne.chain(tweenTwo);
-		tweenOne.start();
-
-
-*/
 
 }
 
@@ -667,14 +612,23 @@ function getOrbitControls( cam, dom) {
 	control.rotateSpeed = 0.5;
 	control.zoomSpeed = 0.3;
 	control.enablePan = false;
-	control.noRotate = false;
+	control.enabledRotate = true;
 	control.enableDamping = true;
 	return control;
 
 }
+
 //const tbControls = getTrackBallControls(camera, renderer.domElement);
 
 const tbControls = getOrbitControls(camera, renderer.domElement);
+
+// call at beginning and end of animations
+function enableRotate(b) {
+	console.log("controls enabledRotate at ", tbControls.enableRotate);
+	tbControls.enableRotate = b;
+	console.log("controls enabledRotate set to ", tbControls.enableRotate);
+}
+
 /*
 const tbControls = new TrackballControls(camera, renderer.domElement);
 // Const tbControls = new OrbitControls(camera, renderer.domElement);
@@ -691,6 +645,7 @@ tbControls.noRotate = false;
 
 document.querySelector('#tourButton').addEventListener('click', () => {
 	stopTweens();
+	enableRotate(false);
 	tour();
 });
 
