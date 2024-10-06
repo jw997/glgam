@@ -31,7 +31,7 @@ const geojsonfile = './data/final.geojson';
 const countries = await getJson(geojsonfile);
 
 // Make the labels appear above the country, but under the camera
-const countryAltitude = 0.003;
+const countryAltitude = 0.006; // 0.006 is the min height to avoid holes in Greenland
 const labelAltitude = countryAltitude + 0.001;
 
 const Globe = new ThreeGlobe()
@@ -249,10 +249,16 @@ function plotCountryGeometry(clist) {
 		const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
 		camera.position.set(coords.x, coords.y, coords.z);
 		//console.log(' tween updated  new camera poistion is ', camera.position);
-	},
+	})
+	.onComplete(() => {
+		console.log("Move animating done");
+		animatingMove = false;
+	}
 	);
 
 	tweenOne.chain(tweenTwo);
+
+    animatingMove = true;
 	tweenOne.start();
 
 	console.log(thisc.properties.NAME_LONG, ' ', coords);
@@ -343,11 +349,25 @@ let
 countryList = [answer];
 
 let tourTweens = [];  // needed by animate
+let animatingTour = false;
 
+let animatingMove = false;  // used by plot country tweens
 function tour() {
+
+	// 1 animation at a time
+	// once you arrive, not more waiting
+	// if you hit start over, cancel the tour 
+    // pause over each country
+	// make time proportional to distance
+	// maybe fly up between each country?
+
 	// get coords for all the countries in the list, and go visit all of them
 	// coordArray entries have  lat, lng, altitude
+    animatingTour = true;
+
 	let coordArray = []
+	
+
 	console.log(countryList);
 	for(let i =0; i < countryList.length; i++) {
 		const country = countries.features.find(d => countryList[i] === d.properties.ISO_A3_EH);
@@ -359,7 +379,9 @@ function tour() {
 		// country.cameraCoords is xyz
 	}
 	// visit the target at the end, too
-	coordArray.push( coordArray[0]);
+	if (coordArray.length >= 2) {
+		coordArray.push( coordArray[0]);
+	}
 
 	let coords; 
 
@@ -367,12 +389,15 @@ function tour() {
 	const tweenCoords = startTween;
 
 	tourTweens = [] // empty out tweeens from last time!
+  
+	// last tween om chain should set animatingTour to false
 
 	for(let i =0; i < coordArray.length; i++) {
 		//const dest = coordArray[i];
 		const endTween = coordArray[i];
 		const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4};
 
+		// not working for fiji to kiribati??
 		if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
 			if (endTween.lng < 0) {
 				endTween.lng += 360;
@@ -381,23 +406,43 @@ function tour() {
 			}
 		}
 
+		const dist = Math.abs( endTween.lng - startTween.lng) + Math.abs( endTween.lat - startTween.lat);
+		console.log ("tween dist ", dist);
+        // max is 180 + 90 = 270
+		const tweenTime = Math.max(1500, dist * 18);  // at least 1.5 second
 		
 
-		const tween = new Tween(tweenCoords)
+		const tween= new Tween(tweenCoords)
 		
 		.easing(Easing.Quadratic.InOut)
-		.to(endTween,2500)
+		.delay(200)
+		.to(endTween,tweenTime)
 		.onUpdate(() => {
 			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
 
-			console.debug(' tween ', i , ' updated  new poistion is ', tweenCoords);
+			//console.debug(' tween ', i , ' updated  new position is ', tweenCoords);
 
 			camera.position.set(coords.x, coords.y, coords.z);
-			console.debug(' tween ', i , ' updated  new camera poistion is ', camera.position);
-		},
+			//console.debug(' tween ', i , ' updated  new camera position is ', camera.position);
+		}
 		);
+		if ((coordArray.length-1)==i) {
+			tween.onComplete(() => {
+				//animatingTour = false;
+				console.log("Animating tour completed")
+			})
+		}
 
-        tourTweens.push(tween);
+		;
+
+		if (coordArray.length - 1 == i) {
+			tween.onComplete = () => {animatingTour = false; console.log("Animating tour completed")}
+		}
+
+		if (startTween != endTween) {
+
+        	tourTweens.push(tween);
+		}
 		console.log( "created a tween from ", startTween, " to ", endTween);
 
 		startTween = endTween;  // set it for next loop
@@ -467,6 +512,7 @@ function tour() {
 }
 
 function resetGameState() {
+
 	answerIndex = Math.floor(Math.random() * s.size);
 	answer = Array.from(s.values())[answerIndex];
 	// Xanswer_name = Array.from(s.keys())[answer_index];
@@ -568,7 +614,7 @@ function handleChange(_name, _event) {
 	//   alert(msg);
 
 	  } */
-
+	stopTweens();
 	plotCountryGeometry(countryList);
 }
 
@@ -644,14 +690,17 @@ tbControls.noRotate = false;
 
 
 document.querySelector('#tourButton').addEventListener('click', () => {
+	stopTweens();
 	tour();
 });
 
 document.querySelector('#resetbutton').addEventListener('click', () => {
+	stopTweens();
 	resetGameState();
 });
 
 document.querySelector('#showanswerbutton').addEventListener('click', () => {
+	stopTweens();
 	countryList.push(answer);
 
 	const audio = new Audio('success.mp3');
@@ -662,11 +711,48 @@ document.querySelector('#showanswerbutton').addEventListener('click', () => {
 
 plotCountryGeometry(countryList);
 
+function stopTweens() {
+	animatingMove=false;
+	animatingTour=false;
+	//tourTweens.forEach( t => t.stop());
+	tourTweens.forEach( t => t.pause());
+	if (tweenOne != undefined) {
+		//tweenOne.stop();
+		tweenOne.pause();
+	}
+	if (tweenTwo != undefined)	 {
+		//tweenTwo.stop();
+		tweenTwo.pause();
+	}
+}
+function _checkTourAnimating() {
+	let retval=false;
+
+	if (tourTweens.length ==0 ) {
+		retval = false;
+	}
+
+
+	tourTweens.forEach( t => {
+		if (t.isPlaying()) {
+			retval = true;
+		}
+	});
+
+	return retval;
+}
 function animate(time) {// IIFE
 	// Frame cycle
-	tourTweens.forEach( t => t.update(time));
-	tweenOne.update(time);
-	tweenTwo.update(time);
+	if (animatingTour) {
+		tourTweens.forEach( t => t.update(time));
+		//console.log("animate look check tour tweens " , checkTourAnimating());
+
+	}
+	if (animatingMove) {
+		tweenOne.update(time);
+		tweenTwo.update(time);
+	}
+
 	tbControls.update();
 	//  ResizeCanvasToDisplaySize(canvas);
 	renderer.render(scene, camera);
