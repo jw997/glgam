@@ -70,6 +70,14 @@ for (const [key, value] of s.entries()) {
 	selectElement.append(opt);
 }
 
+function throwConfetti() {
+	confetti({
+		particleCount: 100,
+		spread: 70,
+		origin: { y: 0.6 },
+	  });
+}
+
 function findIndexOfCountry(c, iso) {
 	for (let i = 0; i < c.features.length; i++) {
 		if (c.features[i].properties.ISO_A3_EH === iso) {
@@ -551,6 +559,7 @@ function handleChange(_name, _event) {
 		//   Alert('You win!');
 		const audio = new Audio('success.mp3');
 		audio.play();
+		throwConfetti();
 	}
 	/*
 	  If (countryList.length > 6) {
@@ -561,6 +570,7 @@ function handleChange(_name, _event) {
 	  } */
 	stopTweens();
 	plotCountryGeometry(countryList);
+	
 }
 
 // Setup renderer
