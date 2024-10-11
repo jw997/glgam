@@ -43,7 +43,7 @@ const Globe = new ThreeGlobe()
 	.polygonAltitude(() => countryAltitude); // 0.3 if zoom is less than altitude, the camera is inside the country
 //  Globe.showGraticules(true);
 
-const selectElement = document.querySelector('#iso-select');
+//const selectElement = document.querySelector('#iso-select');
 // SelectElement.compare = Intl.Collator(undefined).compare ;
 // loop through features
 const map = new Map();
@@ -61,6 +61,8 @@ for (const element of countries.features) {
 // Sort country list and populate select
 const s = new Map([...map.entries()].sort(Intl.Collator(undefined).compare));
 
+// put countries in the select2
+/*
 for (const [key, value] of s.entries()) {
 	//  Console.log(key, ' ', value);
 	const opt = document.createElement('option');
@@ -68,6 +70,17 @@ for (const [key, value] of s.entries()) {
 	opt.innerHTML = key;
 	// Opt.backgound = rgba(100, 100, 100, 0.3);
 	selectElement.append(opt);
+}*/
+
+// put countries in the flex box 
+const countriesFlexbox = document.querySelector('#countries');
+for (const [key, value] of s.entries()) {
+	//  Console.log(key, ' ', value);
+	const b = document.createElement('button');
+	b.value = value;
+	b.innerHTML = key;
+	// Opt.backgound = rgba(100, 100, 100, 0.3);
+	countriesFlexbox.append(b);
 }
 
 function throwConfetti() {
@@ -193,12 +206,12 @@ function plotCountryGeometry(clist) {
 	const bear = turf.bearing(point2, point1);
 	const distribution = turf.distance(point1, point2);
 
-	if (clist.length > 1) {
+/*	if (clist.length > 1) {
 		addGuessToTable(thisc.properties.NAME_LONG, bear, distribution);
 	} else {
 		addGuessToTable('?', 0, 0);
 	}
-
+*/
 	const geo = thisc.geometry;
 	// Compute bbox size for zoom
 	const bboxsize = getBboxSize(thisc);
@@ -472,11 +485,18 @@ function resetGameState() {
 	countryList = [answer];
 	lastColor = 0;
 
+	// renable country buttons
+	for (const b  of disabledCountryButtons ) {
+		b.disabled = false;
+	}
+	disabledCountryButtons.length=0;
+	
+
 	// Clear guess table
-	const table = document.querySelector('#guessTable');
+	/*const table = document.querySelector('#guessTable');
 	while (table.rows[0]) {
 		table.deleteRow(0);
-	}
+	}*/
 
 	// Clear color assignments
 	for (const element of countries.features) {
@@ -572,6 +592,73 @@ function handleChange(_name, _event) {
 	plotCountryGeometry(countryList);
 	
 }
+
+
+const disabledCountryButtons = []
+
+function handleCountryButtonClick(event) {
+	console.log("handle country button click", event.target.innerHTML, event.target.value);
+
+	const id = event.target.value;
+
+	const sp = document.querySelector("#pickedCountryList");
+	sp.innerHTML = event.target.innerHTML + " " + sp.innerHTML;
+
+
+	const oldText = event.target.innerHTML;
+	event.target.disabled = true;
+	disabledCountryButtons.push(event.target);
+	console.log("button clicked ", event.target);
+
+	countryList.push(id);
+
+	if (id === countryList[0]) {
+		//   Alert('You win!');
+		const audio = new Audio('success.mp3');
+		audio.play();
+		throwConfetti();
+	}
+	/*
+	If (countryList.length > 6) {
+	// Globe.showGraticules(true);
+	const msg = 'you lose it was '.concat(answer_name);
+	//   alert(msg);
+	
+	} */
+	stopTweens();
+	plotCountryGeometry(countryList);
+
+}
+document.querySelector('#countries').addEventListener('click', (event) => {
+	document.querySelector('#openclose').click();
+	handleCountryButtonClick(event);
+});
+
+
+function handleOpenClose(event) { 
+console.log("handle open close ", event.target.innerHTML);
+
+const oldText = event.target.innerHTML;
+const countryList = document.querySelector('#countrylist');
+const countries = document.querySelector('#countries');
+if (oldText == "▸") {
+	event.target.innerHTML = "&blacktriangledown;"
+	countryList.style.height="75%";
+	countries.style.visibility="visible";
+
+} else {
+	event.target.innerHTML = "&blacktriangleright;"
+	countryList.style.height="5%";
+	countries.style.visibility="collapse";
+
+}
+
+}
+document.querySelector('#openclose').addEventListener('click', (event) => {
+handleOpenClose(event);
+
+
+});
 
 // Setup renderer
 const renderer = new THREE.WebGLRenderer();
