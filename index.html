@@ -63,7 +63,7 @@
 			width: 300px;
 			height: 30PX;
 			margin: 0 auto;
-			background: red;
+			background: rgba(0, 0, 0, 0.1);
 			position: fixed;
 			left: 50%;
 			bottom: 5%;
@@ -82,11 +82,14 @@
 			width: 90%;
 
 			margin: 0 auto;
-			background: red;
+			background:  rgba(0, 0, 0, 0.1);
 			position: fixed;
 
 			bottom: 5%; 
 			left: 5%;
+			visibility: hidden;
+
+			pointer-events: visible;
 			
 		}
 
@@ -100,20 +103,7 @@
       }
     }*/
 
-		/* debugging info overlay */
-		#overlay {
-			position: fixed;
-			display: block;
-			width: 40svw;
-			height: 20svh;
-			top: 5svh;
-			left: 5svw;
-			right: 0;
-			bottom: 0;
-			background-color: rgba(0, 0, 0, 0.5);
-			z-index: 2;
-			cursor: pointer;
-		}
+		
 
 		#text {
 			position: absolute;
@@ -126,8 +116,8 @@
 		}
 
 		.button {
-			background-color: #04AA6D;
-			border: none;
+			background-color: RGB(0,0,0,0);
+			border: 1PX SOLID WHITE;
 			color: white;
 			padding: 5px 20px 5px 20px;
 			text-align: center;
@@ -136,7 +126,8 @@
 			font-size: 1.2em;
 			margin: 4px 2vw;
 			border-radius: 99999vmax;
-			width: 2em;
+			width: 10svw;
+			visibility: visible;
 			
 		}
 

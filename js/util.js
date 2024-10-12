@@ -490,6 +490,11 @@ function resetGameState() {
 		b.disabled = false;
 	}
 	disabledCountryButtons.length=0;
+
+	const sp = document.querySelector("#pickedCountryList");
+	sp.innerHTML = "";
+
+
 	
 
 	// Clear guess table
