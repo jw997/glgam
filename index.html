@@ -65,14 +65,18 @@
 			background-color: RGB(0,0,0,0);
 			border: 1PX SOLID WHITE;
 			color: white;
-			padding: 5px 20px 5px 20px;
+			padding: 5px 10px 5px 10px;
 			text-align: center;
 			text-decoration: none;
 			display: inline-block;
-			font-size: 1.2em;
+			font-size: 1em;
 			margin: 4px 2vw;
 			border-radius: 99999vmax;
-			width: 10svw;
+			max-width: 33%;
+			min-width: calc(44px + 2rem);	
+			min-height: 44px;
+			
+			
 			visibility: visible;
 			
 		}
@@ -156,7 +160,7 @@
 	<div class="container">
 
 		<div class="topcenter" id="countrylist" >
-			<span id="countryPickHeader">Guess  
+			<span id="countryPickHeader">Guess
 				<button class="button" id="openclose">&blacktriangleright;</button>
 			    <span id="pickedCountryList"> </span>
 			</span>
