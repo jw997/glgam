@@ -20,10 +20,10 @@ import {OrbitControls} from 'https://unpkg.com/three/examples/jsm/controls/Orbit
 //  Initialize - one time
 //  reset game state
 //  Game Loop
-
+/*
 $(document).ready(() => {
 	$('.js-example-basic-single').select2();
-});
+});*/
 
 import {getJson} from "./utils_helper.js";
 
@@ -530,13 +530,13 @@ function directionSymbol(bear) {
 	return returnValue;
 }
 
-const $eventSelect = $('.js-example-basic-single');
+//const $eventSelect = $('.js-example-basic-single');
 // Make it wide enough
-$('#iso-select').select2({dropdownAutoWidth: true});
+//$('#iso-select').select2({dropdownAutoWidth: true});
 
-$eventSelect.on('change', _event => {
-	handleChange('change');
-});
+//$eventSelect.on('change', _event => {
+	//handleChange('change');
+//});
 
 // Loop to handle user input
 // get the ISO_A3 code from the input
@@ -544,6 +544,7 @@ $eventSelect.on('change', _event => {
 // check if too many guesses -- LOSE
 //
 // call plot to draw countries
+/*
 function handleChange(_name, _event) {
 	const v1 = $('#iso-select').select2('data');
 	const id = v1[0].id;
@@ -562,11 +563,11 @@ function handleChange(_name, _event) {
 	const msg = 'you lose it was '.concat(answer_name);
 	//   alert(msg);
 
-	  } */
+	  } 
 	stopTweens();
 	plotCountryGeometry(countryList);
 	
-}
+}*/
 
 
 const disabledCountryButtons = []
