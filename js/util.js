@@ -206,12 +206,6 @@ function plotCountryGeometry(clist) {
 	const bear = turf.bearing(point2, point1);
 	const distribution = turf.distance(point1, point2);
 
-/*	if (clist.length > 1) {
-		addGuessToTable(thisc.properties.NAME_LONG, bear, distribution);
-	} else {
-		addGuessToTable('?', 0, 0);
-	}
-*/
 	const geo = thisc.geometry;
 	// Compute bbox size for zoom
 	const bboxsize = getBboxSize(thisc);
@@ -494,15 +488,6 @@ function resetGameState() {
 	const sp = document.querySelector("#pickedCountryList");
 	sp.innerHTML = "";
 
-
-	
-
-	// Clear guess table
-	/*const table = document.querySelector('#guessTable');
-	while (table.rows[0]) {
-		table.deleteRow(0);
-	}*/
-
 	// Clear color assignments
 	for (const element of countries.features) {
 		delete element.color;
@@ -543,21 +528,6 @@ function directionSymbol(bear) {
 		'\u{2193}'];
 	const returnValue = symbolArray[index];
 	return returnValue;
-}
-
-function addGuessToTable(id, bear, distribution) {
-	const table = document.querySelector('#guessTable');
-
-	// Add row to end of table
-	const newRow = table.insertRow();
-
-	const nameCell = newRow.insertCell(0);
-	const distributionCell = newRow.insertCell(1);
-	const bearCell = newRow.insertCell(2);
-
-	nameCell.innerHTML = id;
-	bearCell.innerHTML = directionSymbol(Math.round(bear));
-	distributionCell.innerHTML = Math.round(distribution);
 }
 
 const $eventSelect = $('.js-example-basic-single');
@@ -731,20 +701,6 @@ function enableRotate(b) {
 	console.log("controls enabledRotate set to ", tbControls.enableRotate);
 }
 
-/*
-const tbControls = new TrackballControls(camera, renderer.domElement);
-// Const tbControls = new OrbitControls(camera, renderer.domElement);
-
-tbControls.minDistance = 101;
-tbControls.rotateSpeed = 5;
-tbControls.zoomSpeed = 0.8;
-tbControls.noPan = true;
-tbControls.noRotate = false;
-// TbControls.minDistance =1
-// tbControls.maxDistance = 5000;
-*/
-
-
 document.querySelector('#tourButton').addEventListener('click', () => {
 	stopTweens();
 	enableRotate(false);
@@ -782,22 +738,37 @@ function stopTweens() {
 		tweenTwo.pause();
 	}
 }
-function _checkTourAnimating() {
-	let retval=false;
 
-	if (tourTweens.length ==0 ) {
-		retval = false;
+var lastCanvasHeight, lastCanvasWidth;
+
+function resizeCanvasToDisplaySize(canvas) {
+	if (lastCanvasHeight == canvas.clientHeight &&
+		lastCanvasWidth == canvas.clientWidth &&
+		lastWindowWidth == window.innerWidth &&
+		lastWindowHeight == window.innerHeight) {
+		// nothing to do
+		return;
 	}
+	//nResize++;
 
+	// Lookup the size the browser is displaying the canvas in CSS pixels.
+	//  console.log("Window wxh ", window.innerWidth, " ", window.innerHeight);
+	//  console.log("canvas client dims ", canvas.clientWidth, canvas.clientHeight);
 
-	tourTweens.forEach( t => {
-		if (t.isPlaying()) {
-			retval = true;
-		}
-	});
+	//  console.log("dpi ", window.devicePixelRatio);
+	//  console.log("camera aspect ", camera.aspect);
 
-	return retval;
+	// https://stackoverflow.com/questions/45041158/resizing-canvas-webgl-to-fit-screen-width-and-heigh
+	// TODO use canvas.clientWidth and height instead of window?
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	return;
+
 }
+
+	
 function animate(time) {// IIFE
 	// Frame cycle
 	if (animatingTour) {
@@ -811,7 +782,7 @@ function animate(time) {// IIFE
 	}
 
 	tbControls.update();
-	//  ResizeCanvasToDisplaySize(canvas);
+	resizeCanvasToDisplaySize(canvas);
 	renderer.render(scene, camera);
 	requestAnimationFrame(animate);
 	// TWEEN.update(time);

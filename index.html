@@ -27,51 +27,17 @@
 			margin: 0;
 		}
 
-		table {
-			border: 1px solid black;
-			background-color: white;
-		}
-
 		.container {
 			position: relative;
 		}
 
 		#globeViz {
 
-			width: 100svw;
-			height: 100svh;
+			width: 100dvw;
+			height: 100dvh;
 
 		}
-
-		.bottomleft {
-			position: absolute;
-			bottom: 30svh;
-			left: 5svw;
-			height: 24pt;
-			width: 25svw;
-		}
-
-		.bottomcenterx {
-			position: absolute;
-			bottom: 5svh;
-			left: 25svw;
-			height: 30pt;
-			width: 50svw;
-		}
-
-		.bottomcenterXX {
-			width: 300px;
-			height: 30PX;
-			margin: 0 auto;
-			background: rgba(0, 0, 0, 0.1);
-			position: fixed;
-			left: 50%;
-			bottom: 5%;
-			margin-left: -150px;
-
-
-
-		}
+		
 
 		.bottomcenter {
 			display: flex;
@@ -93,27 +59,7 @@
 			
 		}
 
-	/*
-    @media screen and (max-width: 767px) {
 
-      input,
-      select,
-      textarea {
-        font-size: 16px !important;
-      }
-    }*/
-
-		
-
-		#text {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			font-size: 16px;
-			color: white;
-			transform: translate(-50%, -50%);
-			-ms-transform: translate(-50%, -50%);
-		}
 
 		.button {
 			background-color: RGB(0,0,0,0);
@@ -207,12 +153,10 @@
 
 	<div id="tsparticles"></div>
 
-
-
 	<div class="container">
 
 		<div class="topcenter" id="countrylist" >
-			<span id="countryPickHeader">Pick a country 
+			<span id="countryPickHeader">Guess  
 				<button class="button" id="openclose">&blacktriangleright;</button>
 			    <span id="pickedCountryList"> </span>
 			</span>
@@ -221,33 +165,16 @@
 			</div>			
 		</div>
 		<div id="globeViz"></div>
-<!----
-		<div class="bottomleft">
-			<table id="guessTable"></table>
 
-			<!--<label for="iso-select">Choose a country:</label>
-
-			<select class="js-example-basic-single" name="countries" id="iso-select" style="width: auto;">
-				<option disabled selected value> -- select an option -- </option>
-
-				<!----  <option value="">--Please choose an option--</option> 
-			</select>
-		</div>
-	-->
 		<div class="bottomcenter">
 
 			<button class="button" id="resetbutton">Restart</button>
 			<button class="button" id="showanswerbutton">Reveal</button>
 			<button class="button" id="tourButton">Tour</button>
 
-
 		</div>
 
 	</div>
-
-
-
-
 
 	<script type="module">
 		import { animate } from "./js/util.js";
