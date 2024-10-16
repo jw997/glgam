@@ -575,6 +575,10 @@ const disabledCountryButtons = []
 function handleCountryButtonClick(event) {
 	console.log("handle country button click", event.target.innerHTML, event.target.value);
 
+	if (event.target.tagName != "BUTTON") {
+		console.log("clicked, but not on a button!");
+		return;
+	}
 	const id = event.target.value;
 
 	const sp = document.querySelector("#pickedCountryList");
