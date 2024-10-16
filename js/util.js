@@ -499,7 +499,7 @@ function resetGameState() {
 document.querySelector('#resetbutton').addEventListener('click', () => {
 	resetGameState();
 });
-
+/*
 function directionSymbol(bear) {
 	// North is 0
 	// east is 90
@@ -529,7 +529,7 @@ function directionSymbol(bear) {
 	const returnValue = symbolArray[index];
 	return returnValue;
 }
-
+*/
 //const $eventSelect = $('.js-example-basic-single');
 // Make it wide enough
 //$('#iso-select').select2({dropdownAutoWidth: true});
