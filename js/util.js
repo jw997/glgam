@@ -31,7 +31,7 @@ const geojsonfile = './data/final.geojson';
 const countries = await getJson(geojsonfile);
 
 // Make the labels appear above the country, but under the camera
-const countryAltitude = 0.006; // 0.006 is the min height to avoid holes in Greenland
+const countryAltitude = 0.008; // 0.006 is the min height to avoid holes in Greenland
 const labelAltitude = countryAltitude + 0.001;
 
 const Globe = new ThreeGlobe()
