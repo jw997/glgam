@@ -210,6 +210,7 @@ function plotCountryGeometry(clist) {
 	// Compute bbox size for zoom
 	const bboxsize = getBboxSize(thisc);
 	const rad = getZoomForSize(bboxsize);
+	setRotateSpeedFromRadius(rad);
 
 	console.log('bbox area is', thisc.properties.NAME_LONG, bboxsize, rad);
 	// Try bbox for center instead
@@ -699,6 +700,11 @@ function getOrbitControls( cam, dom) {
 
 const tbControls = getOrbitControls(camera, renderer.domElement);
 
+function setRotateSpeedFromRadius( z ) {
+	console.log("Setting rotate speed to ", z/4);
+	tbControls.rotateSpeed = z/4;
+}
+
 // call at beginning and end of animations
 function enableRotate(b) {
 	console.log("controls enabledRotate at ", tbControls.enableRotate);
@@ -773,8 +779,20 @@ function resizeCanvasToDisplaySize(canvas) {
 
 }
 
-	
+let lastCameraDistance = -1; // used for setting rotate speed
+
 function animate(time) {// IIFE
+	
+	let dist = Math.sqrt( camera.position.x * camera.position.x + camera.position.y*camera.position.y + camera.position.z * camera.position.z);
+
+	if (lastCameraDistance != dist) {
+		lastCameraDistance = dist;
+		//console.log("camera distance ", dist);
+		const radius = (dist-100)/100; // why 100?
+		setRotateSpeedFromRadius(radius);
+	}
+	
+	
 	// Frame cycle
 	if (animatingTour) {
 		tourTweens.forEach( t => t.update(time));
@@ -790,7 +808,7 @@ function animate(time) {// IIFE
 	resizeCanvasToDisplaySize(canvas);
 	renderer.render(scene, camera);
 	requestAnimationFrame(animate);
-	// TWEEN.update(time);
+	
 }
 
 // Remove fetch });
