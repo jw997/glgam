@@ -367,6 +367,8 @@ let animatingTour = false;
 let animatingMove = false;  // used by plot country tweens
 function tour() {
 
+	console.log(" tour button disabled ", document.querySelector('#tourButton').disabled );
+
 	// 1 animation at a time
 	// once you arrive, not more waiting
 	// if you hit start over, cancel the tour 
@@ -445,6 +447,7 @@ function tour() {
 			tween.onComplete(() => {
 				animatingTour = false;
 				enableRotate(true); 
+				disableTourButton(false);
 				console.log("Animating tour completed")
 			})
 		}
@@ -492,18 +495,12 @@ function resetGameState() {
 	plotCountryGeometry(countryList);
 }
 
-document.querySelector('#resetbutton').addEventListener('click', () => {
-	resetGameState();
-});
-
 // Loop to handle user input
 // get the ISO_A3 code from the input
 // check if it is the country we are looking for -- WIN
 // check if too many guesses -- LOSE
 //
 // call plot to draw countries
-
-
 
 const disabledCountryButtons = []
 
@@ -570,9 +567,7 @@ if (oldText == "▸") {
 
 }
 document.querySelector('#openclose').addEventListener('click', (event) => {
-handleOpenClose(event);
-
-
+	handleOpenClose(event);
 });
 
 // Setup renderer
@@ -646,6 +641,9 @@ function enableRotate(b) {
 	console.log("controls enabledRotate set to ", tbControls.enableRotate);
 }
 
+function disableTourButton( dFlag ) {
+	document.querySelector('#tourButton').disabled=dFlag;
+}
 document.querySelector('#tourButton').addEventListener('click', () => {
 	if (animatingTour) {
 		return;
@@ -653,6 +651,7 @@ document.querySelector('#tourButton').addEventListener('click', () => {
 	
 	stopTweens();
 	enableRotate(false);
+	disableTourButton(true);
 	tour();
 });
 
@@ -686,6 +685,7 @@ function stopTweens() {
 		//tweenTwo.stop();
 		tweenTwo.pause();
 	}
+	disableTourButton(false);
 }
 
 var lastCanvasHeight, lastCanvasWidth;
