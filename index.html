@@ -4,19 +4,22 @@
 	<meta name="viewport"
 		content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
 
-	<style>
+	<style>		
 		.sansserif {
   			font-family: Verdana, Arial, Helvetica, sans-serif;
 		}		
 		body {
 			margin: 0;
+			-webkit-user-select: none;			
+			user-select: none;			
 		}
 		.container {
-			position: relative;
+			position: relative;	
 		}
 		#globeViz {
 			width: 100dvw;
 			height: 100dvh;
+			
 		}
 		.bottomcenter {
 			display: flex;
@@ -47,6 +50,7 @@
 			min-height: 44px;	
 			visibility: visible;
 			touch-action: none;
+			
 		}
 		.topcenter {
 			padding: 0;
