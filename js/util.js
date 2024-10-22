@@ -542,29 +542,33 @@ function handleCountryButtonClick(event) {
 
 }
 document.querySelector('#countries').addEventListener('click', (event) => {
+
 	document.querySelector('#openclose').click();
 	handleCountryButtonClick(event);
 });
 
+let rememberCountriesScrollPos=0;
 
-function handleOpenClose(event) { 
-console.log("handle open close ", event.target.innerHTML);
+function handleOpenClose(event) {
+	console.log("handle open close ", event.target.innerHTML);
 
-const oldText = event.target.innerHTML;
-const countryList = document.querySelector('#countrylist');
-const countries = document.querySelector('#countries');
-if (oldText == "▸") {
-	event.target.innerHTML = "&blacktriangledown;"
-	countryList.style.height="75%";
-	countries.style.visibility="visible";
+	const oldText = event.target.innerHTML;
+	const countryList = document.querySelector('#countrylist');
+	const countries = document.querySelector('#countries');
 
-} else {
-	event.target.innerHTML = "&blacktriangleright;"
-	countryList.style.height="5%";
-	countries.style.visibility="collapse";
+	if (oldText == "▸") {  // opening
+		event.target.innerHTML = "&blacktriangledown;"
+		console.log("Scrolling to ", rememberCountriesScrollPos);
+		countryList.style.height = "75%";
+		countries.style.visibility = "visible";
+		countries.scrollLeft = rememberCountriesScrollPos;
 
-}
-
+	} else { // closing
+		rememberCountriesScrollPos = countries.scrollLeft;
+		event.target.innerHTML = "&blacktriangleright;"
+		countryList.style.height = "5%";
+		countries.style.visibility = "collapse";
+	}
 }
 document.querySelector('#openclose').addEventListener('click', (event) => {
 	handleOpenClose(event);
