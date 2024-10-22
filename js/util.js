@@ -61,17 +61,6 @@ for (const element of countries.features) {
 // Sort country list and populate select
 const s = new Map([...map.entries()].sort(Intl.Collator(undefined).compare));
 
-// put countries in the select2
-/*
-for (const [key, value] of s.entries()) {
-	//  Console.log(key, ' ', value);
-	const opt = document.createElement('option');
-	opt.value = value;
-	opt.innerHTML = key;
-	// Opt.backgound = rgba(100, 100, 100, 0.3);
-	selectElement.append(opt);
-}*/
-
 // put countries in the flex box 
 const countriesFlexbox = document.querySelector('#countries');
 for (const [key, value] of s.entries()) {
