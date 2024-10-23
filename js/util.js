@@ -30,7 +30,7 @@ const countries = await getJson(geojsonfile);
 
 // Make the labels appear above the country, but under the camera
 const countryAltitude = 0.008; // 0.006 is the min height to avoid holes in Greenland
-const labelAltitude = countryAltitude + 0.001;
+const labelAltitude = countryAltitude + 0.0008;
 
 const Globe = new ThreeGlobe()
 	// .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
@@ -105,6 +105,9 @@ function getBboxCenter(feat) {
 
 // Give a bbox size, pick a height above earth surface in earth radius units
 function getZoomForSize(s) {
+	if (s < 0.001) {
+		return 0.01;
+	}
 	if (s < 1) {
 		return 0.05;
 	}
@@ -121,6 +124,10 @@ function getZoomForSize(s) {
 }
 
 function getLabelForSize(s) {
+	if (s < 0.001) {
+		return 0.005;
+	}
+
 	if (s < 1) {
 		return 0.05;
 	}
@@ -134,6 +141,12 @@ function getLabelForSize(s) {
 	}
 
 	return 1.25;
+}
+function getLabelOffsetForSize(s) {
+	if (s < 0.001) {
+		return 0.01;
+	}
+	return 0.4;
 }
 
 
@@ -295,11 +308,12 @@ function plotCountryGeometry(clist) {
 		// Compute bbox size for zoom
 		const bboxsize = getBboxSize(element);
 		const labelSize = getLabelForSize(bboxsize);
+		const labelOffset = getLabelOffsetForSize(bboxsize);
 
 		const asciiName = element.properties.NAME_LONG.normalize('NFD').replaceAll(/[\u0300-\u036F]/g, '');
 
 		labelData.push({
-			lat: loc[1], lng: loc[0] + 0.4, size: labelSize, color: 'white', name: asciiName,
+			lat: loc[1], lng: loc[0] + labelOffset, size: labelSize, color: 'white', name: asciiName,
 		});
 
 		if (!won && element.properties.ISO_A3_EH === clist[0]) {
