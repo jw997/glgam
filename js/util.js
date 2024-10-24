@@ -54,6 +54,31 @@ for (const element of countries.features) {
 		map.set(element.properties.NAME_LONG, element.properties.ISO_A3_EH);
 		// Xconsole.info('sed s/', element.properties.NAME_LONG, '/', element.properties.ISO_A3_EH, '/');
 	}
+	// log country polygon info
+	logPolygonInfo(element);
+}
+
+function logPolygonInfo( e) {
+	const g = e.geometry;
+	const t = e.geometry.type;
+//	console.log(e.properties.ISO_A3_EH, e.properties.NAME_LONG, e.geometry.type);
+	const areas = [];
+
+	if ("Polygon" == t) {
+		const a = turf.area( turf.polygon([g.coordinates[0]]));
+
+		areas.push(Math.round(a/1000000));
+	}
+	if ("MultiPolygon" == t) {
+	//	console.log("polygon count: ", g.coordinates.length);
+		for (let i=0; i< g.coordinates.length; i++) {
+			let p= g.coordinates[i][0];
+		    let a = turf.area( turf.polygon([p]));
+			areas.push(Math.round(a/1000000));
+		}
+	}
+	const msg = "" + e.properties.ISO_A3_EH + " " + e.properties.NAME_LONG + " " + e.geometry.type + " " + areas;
+	console.log(msg);
 }
 
 // Sort country list and populate select
@@ -88,15 +113,73 @@ function findIndexOfCountry(c, iso) {
 	return undefined;
 }
 
+// Override bboxes for some countries, like widely disperesed islands
+const boxes = new Map();
+boxes.set("ASM",  [	-171,	-14.7,	-168,	-13.75  ]); // American Samo
+
+boxes.set("IOT",  [	72.2, -7.6,	72.6, -7.07  ]); // British Indian Ocean Territory
+
+boxes.set("KIR",  [	-160.41, 0.44,	-159.44, 4.35  ]); // Kiribati
+
+boxes.set("SYC",  [	54.75, -5.3,	56.8, -3.4  ]); // Seychelles, capital Victoria
+
+boxes.set("TUV",  [	179.14, -8.6,	179.3, -8.43  ]); // Tuvalu, capital Funafuti
+
+
+boxes.set("COK",  [	-160, -22.1, -157.2, -18.8  ]); // Cook Islands, capital Avarua
+
+boxes.set("FJI",  [	177.2, -19, 179.9, -16  ]); // Fiji, capital Suva
+
+
+boxes.set("FSM",  [	157.7, 6.3, 159, 7.3  ]); // Fed Sts of Micronesia, capital Palikir
+
+boxes.set("PYF",  [	-151.7, -18, -150, -16  ]); // French Polynesia, capital Papeete
+
+boxes.set("MDV",  [	73.4, 4.1, 73.7, 4.4  ]); // Maldives, capital Male
+
+boxes.set("MHL",  [	170.9, 6.8, 172.2, 7.3  ]); // Marshall Islands, capital Majuro
+
+boxes.set("MUS",  [	57, -20.9, 63.6, -19  ]); // Mauritius, capital Port Louis, maybe just left island?
+
+boxes.set("PLW",  [	133.9, 6.6, 134.7, 8.1  ]); // Palau, capital 	Ngerulmud
+
+boxes.set("SHN",  [	-6.3, -16.2, -5.3, -15.3  ]); // Saint Helena, capital 	Jamestown
+
+boxes.set("SGS",  [	 -38.4, -55.3, -36 , -53.5 ]); // South Georgia, capital 
+boxes.set("TON",  [	 -175.53, -21.6, -174.8, -21 ]); // Tonga, capital Nukuʻalofa
+
+boxes.set("TUV",  [	 179, -8.6, 179.2, -8.4 ]); // Tuvalu, capital Funafuti
+
+function getBoxForFeature( feat ) {
+	const code = feat.properties.ISO_A3_EH;
+	const box = boxes.get(code);
+	if (box) {
+		console.log("Overriding bbox for " + code + " with " + box +  " instead of " + feat.bbox);
+	}
+	const retval = box ?? feat.bbox;
+	return retval;
+}
+
 function getBboxSize(feat) {
-	const area = Math.abs(feat.bbox[2] - feat.bbox[0]) * (feat.bbox[3] - feat.bbox[1]);
+
+	const box = getBoxForFeature(feat);
+	// date line?
+	
+	let area = Math.abs(box[2] - box[0]) * (box[3] - box[1]);  // use turf?
+
+	if (box[0] > 0 && box[2] < 0) { // cross the date line 
+	    area = Math.abs(360 + box[2] - box[0]) * (box[3] - box[1]);  // use turf?
+	} 
+
+	console.log("Box area for " + feat.properties.ISO_A3_EH + " " + area);
 	return area;
 }
 
 function getBboxCenter(feat) {
-	const center = [(feat.bbox[2] + feat.bbox[0]) / 2, (feat.bbox[3] + feat.bbox[1]) / 2];
+	const box = getBoxForFeature(feat);
+	const center = [(box[2] + box[0]) / 2, (box[3] + box[1]) / 2];
 
-	if (feat.bbox[0] > 0 && feat.bbox[2] < 0) {
+	if (box[0] > 0 && box[2] < 0) {
 		center[0] += 180;
 	}
 
