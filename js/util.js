@@ -597,8 +597,8 @@ function handleCountryButtonClick(event) {
 	}
 	const id = event.target.value;
 
-	const sp = document.querySelector("#pickedCountryList");
-	sp.innerHTML = event.target.innerHTML + " " + sp.innerHTML;
+	//const sp = document.querySelector("#pickedCountryList");
+	//sp.innerHTML = event.target.innerHTML + " " + sp.innerHTML;
 
 
 	const oldText = event.target.innerHTML;
