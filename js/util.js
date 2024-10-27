@@ -2,28 +2,34 @@ import {Tween, Easing} from 'tween';
 // Just used for zooming
 import {OrbitControls} from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
-// DONE load both geojson and switch on geo length
-// label country guesses
-// restart without reloading
-// DONE zoom based on country size
-// add method to naviate to goal country
-// DONE change color for each country
-// fix layout for mobile so select is readable
-// DONE support window resize
-// DONE replace alert win /lose message with a non alert scheme
-// switch to viewport coordinates vw vh and percentages
-// try as a PWA
-// try a bottom sheet
-
 //  Initialize - one time
 //  reset game state
 //  Game Loop
-/*
-$(document).ready(() => {
-	$('.js-example-basic-single').select2();
-});*/
 
-import {getJson} from "./utils_helper.js";
+
+class State {
+    // data
+	static answerIndex;
+    static answer;
+	static countryList;
+
+	// GUI stuff
+	static lastColor = 0;
+	static disabledCountryButtons=[];
+	static rememberCountriesScrollPos=0;
+
+	// animations
+	static tourTweens = [];
+	static tweenOne;
+	static tweenTwo;
+
+	static animatingTour = false;
+	static animatingMove = false; 
+
+}
+
+
+import {getJson,distanceBetweenCoords,fixStartLng} from "./utils_helper.js";
 
 const geojsonfile = './data/final.geojson';
 const countries = await getJson(geojsonfile);
@@ -41,18 +47,14 @@ const Globe = new ThreeGlobe()
 	.polygonAltitude(() => countryAltitude); // 0.3 if zoom is less than altitude, the camera is inside the country
 //  Globe.showGraticules(true);
 
-//const selectElement = document.querySelector('#iso-select');
-// SelectElement.compare = Intl.Collator(undefined).compare ;
 // loop through features
 const map = new Map();
 for (const element of countries.features) {
 	// Console.log(element.properties.NAME, ' ', element.properties.ISO_A3_EH);
 	// add it to the iso-select options
 	if (element.properties.ISO_A3_EH !== '-99') {
-		// SelectElement.appendChild(opt);
 		// Name is a bit brief, NAME_CIAWF can be null, NAME_SORT is ascii, NAME_LONG
 		map.set(element.properties.NAME_LONG, element.properties.ISO_A3_EH);
-		// Xconsole.info('sed s/', element.properties.NAME_LONG, '/', element.properties.ISO_A3_EH, '/');
 	}
 	// log country polygon info
 	logPolygonInfo(element);
@@ -91,7 +93,6 @@ for (const [key, value] of s.entries()) {
 	const b = document.createElement('button');
 	b.value = value;
 	b.innerHTML = key;
-	// Opt.backgound = rgba(100, 100, 100, 0.3);
 	countriesFlexbox.append(b);
 }
 
@@ -109,45 +110,27 @@ function findIndexOfCountry(c, iso) {
 			return i;
 		}
 	}
-
 	return undefined;
 }
 
 // Override bboxes for some countries, like widely disperesed islands
 const boxes = new Map();
 boxes.set("ASM",  [	-171,	-14.7,	-168,	-13.75  ]); // American Samo
-
 boxes.set("IOT",  [	72.2, -7.6,	72.6, -7.07  ]); // British Indian Ocean Territory
-
 boxes.set("KIR",  [	-160.41, 0.44,	-159.44, 4.35  ]); // Kiribati
-
 boxes.set("SYC",  [	54.75, -5.3,	56.8, -3.4  ]); // Seychelles, capital Victoria
-
 boxes.set("TUV",  [	179.14, -8.6,	179.3, -8.43  ]); // Tuvalu, capital Funafuti
-
-
 boxes.set("COK",  [	-160, -22.1, -157.2, -18.8  ]); // Cook Islands, capital Avarua
-
 boxes.set("FJI",  [	177.2, -19, 179.9, -16  ]); // Fiji, capital Suva
-
-
 boxes.set("FSM",  [	157.7, 6.3, 159, 7.3  ]); // Fed Sts of Micronesia, capital Palikir
-
 boxes.set("PYF",  [	-151.7, -18, -150, -16  ]); // French Polynesia, capital Papeete
-
 boxes.set("MDV",  [	73.4, 4.1, 73.7, 4.4  ]); // Maldives, capital Male
-
 boxes.set("MHL",  [	170.9, 6.8, 172.2, 7.3  ]); // Marshall Islands, capital Majuro
-
 boxes.set("MUS",  [	57, -20.9, 63.6, -19  ]); // Mauritius, capital Port Louis, maybe just left island?
-
 boxes.set("PLW",  [	133.9, 6.6, 134.7, 8.1  ]); // Palau, capital 	Ngerulmud
-
 boxes.set("SHN",  [	-6.3, -16.2, -5.3, -15.3  ]); // Saint Helena, capital 	Jamestown
-
 boxes.set("SGS",  [	 -38.4, -55.3, -36 , -53.5 ]); // South Georgia, capital 
 boxes.set("TON",  [	 -175.53, -21.6, -174.8, -21 ]); // Tonga, capital Nukuʻalofa
-
 boxes.set("TUV",  [	 179, -8.6, 179.2, -8.4 ]); // Tuvalu, capital Funafuti
 
 function getBoxForFeature( feat ) {
@@ -161,10 +144,7 @@ function getBoxForFeature( feat ) {
 }
 
 function getBboxSize(feat) {
-
 	const box = getBoxForFeature(feat);
-	// date line?
-	
 	let area = Math.abs(box[2] - box[0]) * (box[3] - box[1]);  // use turf?
 
 	if (box[0] > 0 && box[2] < 0) { // cross the date line 
@@ -194,15 +174,12 @@ function getZoomForSize(s) {
 	if (s < 1) {
 		return 0.05;
 	}
-
 	if (s < 10) {
 		return 0.1;
 	}
-
 	if (s < 100) {
 		return 0.5;
 	}
-
 	return 1.25;
 }
 
@@ -210,19 +187,15 @@ function getLabelForSize(s) {
 	if (s < 0.001) {
 		return 0.005;
 	}
-
 	if (s < 1) {
 		return 0.05;
 	}
-
 	if (s < 10) {
 		return 0.1;
 	}
-
 	if (s < 100) {
 		return 0.5;
 	}
-
 	return 1.25;
 }
 function getLabelOffsetForSize(s) {
@@ -231,8 +204,6 @@ function getLabelOffsetForSize(s) {
 	}
 	return 0.4;
 }
-
-
 
 /* https://www.w3schools.com/colors/colors_fs595.asp
 	  (10055)	w3-highway-brown	#633517
@@ -253,14 +224,9 @@ function getLabelOffsetForSize(s) {
 */
 
 const colorsHighway = ['#a6001a', '#633517', '#e06000', '#ee9600', '#004d33', '#00477e'];
-// '#e97600','#f6c700','#007256','#0067a7','#964f8e'];
 
-// colors.push(safety_colors);
-
-let lastColor = 0;
-
-let tweenOne;
-let tweenTwo;
+//let State.tweenOne;
+//let State.tweenTwo;
 
 function plotCountryGeometry(clist) {
 	// Const won = clist.clist.length > 1 && (clist[0] === clist[clist.length -1]);
@@ -312,6 +278,8 @@ function plotCountryGeometry(clist) {
 	
 	const endTween = {lng: center[0], lat: center[1], altitude: rad};
 
+	fixStartLng(startTween, endTween);
+
 	const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
 	// If longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
 	if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
@@ -327,17 +295,17 @@ function plotCountryGeometry(clist) {
 
 	// Fly higher in the middle with chain?
 	// global tween
-	 tweenOne = new Tween(tweenCoords)
+	 State.tweenOne = new Tween(tweenCoords)
 		.easing(Easing.Quadratic.InOut)
 		.to(midTween)
-		.onUpdate(() => {
-			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+		.onUpdate((e) => {
+			const coords = Globe.getCoords(e.lat, e.lng, e.altitude);
 			camera.position.set(coords.x, coords.y, coords.z);
 		    //console.log(' tween updated  new camera poistion is ', camera.position);
 		},
 		);
 
-	 tweenTwo = new Tween(tweenCoords)
+	 State.tweenTwo = new Tween(tweenCoords)
 	.easing(Easing.Quadratic.InOut)
 	//.to(midTween)
 	//.chain(midTween)
@@ -346,21 +314,23 @@ function plotCountryGeometry(clist) {
 	.to(endTween)
 	.onUpdate(() => {
 		const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+		console.log("tween lng ", tweenCoords.lng);
+
 		camera.position.set(coords.x, coords.y, coords.z);
 		//console.log(' tween updated  new camera poistion is ', camera.position);
 	})
 	.onComplete(() => {
 		console.log("Move animating done");
-		animatingMove = false;
+		State.animatingMove = false;
 		enableRotate(true); 
 	}
 	);
 
-	tweenOne.chain(tweenTwo);
+	State.tweenOne.chain(State.tweenTwo);
 
-    animatingMove = true;
+    State.animatingMove = true;
 	enableRotate(false);  // disable user globe rotation while we animate the move
-	tweenOne.start();
+	State.tweenOne.start();
 
 	console.log(thisc.properties.NAME_LONG, ' ', coords);
 
@@ -371,8 +341,8 @@ function plotCountryGeometry(clist) {
 	for (const element of c) {
 		if (undefined === element.color) {
 			// C[i].color = colors[Math.round(Math.random() * colors.length)];
-			element.color = colorsHighway[lastColor];
-			lastColor = 1 + ((lastColor + 1) % (colorsHighway.length - 1)); // Save red for target
+			element.color = colorsHighway[State.lastColor];
+			State.lastColor = 1 + ((State.lastColor + 1) % (colorsHighway.length - 1)); // Save red for target
 
 			console.log(element.properties.NAME_LONG, ' ', element.color);
 		}
@@ -424,13 +394,10 @@ const itemHistory = 'History';
 let histString = localStorage.getItem(itemHistory);
 histString ??= '';
 
-let answerIndex;
-let answer;
-
 do {
-	answerIndex = Math.floor(Math.random() * s.size);
-	answer = Array.from(s.values())[answerIndex];
-} while (histString.includes(answer));
+	State.answerIndex = Math.floor(Math.random() * s.size);
+	State.answer = Array.from(s.values())[State.answerIndex];
+} while (histString.includes(State.answer));
 
 // Save the new History, but only the last X entries
 const histLimit = 100;
@@ -439,16 +406,16 @@ if (histString.length > (4 * histLimit)) {
 }
 
 histString += ' ';
-histString += answer;
+histString += State.answer;
 localStorage.setItem(itemHistory, histString);
 
 // Let answer_name = Array.from(s.keys())[answer_index];
-let countryList = [answer];
+State.countryList = [State.answer];
 
-let tourTweens = [];  // needed by animate
-let animatingTour = false;
+//let State.tourTweens = [];  // needed by animate
+//State.animatingTour = false;
+//let State.animatingMove = false;  // used by plot country tweens
 
-let animatingMove = false;  // used by plot country tweens
 function tour() {
 
 	console.log(" tour button disabled ", document.querySelector('#tourButton').disabled );
@@ -462,14 +429,18 @@ function tour() {
 
 	// get coords for all the countries in the list, and go visit all of them
 	// coordArray entries have  lat, lng, altitude
-    animatingTour = true;
+    State.animatingTour = true;
 
-	let coordArray = []
-	
+	let coordArray = []; // country camera coords
 
-	console.log(countryList);
-	for(let i =0; i < countryList.length; i++) {
-		const country = countries.features.find(d => countryList[i] === d.properties.ISO_A3_EH);
+	//let startCoords = [];
+	let endCoords = [];
+	let tweenCoords = [];
+
+	console.log(State.countryList);
+
+	for(let i =0; i < State.countryList.length; i++) {
+		const country = countries.features.find(d => State.countryList[i] === d.properties.ISO_A3_EH);
         const cameraCoords = country.cameraCoords;
 		//console.log ("tour " ,country.properties.NAME_LONG, country.cameraCoords);
 		const geocoords = Globe.toGeoCoords({x: cameraCoords.x, y: cameraCoords.y, z: cameraCoords.z});
@@ -482,30 +453,30 @@ function tour() {
 		coordArray.push( coordArray[0]);
 	}
 
-	let coords; 
+	// make the coordinates for the tweens
+	for(let i =0; i < coordArray.length; i++) {
+		endCoords.push( structuredClone(coordArray[i]));
+	}
+	tweenCoords.push(Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z}))
+	for(let i =1; i < coordArray.length; i++) {
+		tweenCoords.push( structuredClone(endCoords[i-1]));
+	}
+
+	//let coords; 
 
 	let startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
-	const tweenCoords = startTween;
 
-	tourTweens = [] // empty out tweeens from last time!
+//	let tweenCoords = structuredClone(startTween); // tweenCoords is used by each tween in turn
+	
+	State.tourTweens = [] // empty out tweeens from last time!
+	
   
-	// last tween om chain should set animatingTour to false
-
+	// last tween on chain should set animatingTour to false
 	for(let i =0; i < coordArray.length; i++) {
-		//const dest = coordArray[i];
+		
 		const endTween = coordArray[i];
-		//const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4};
-
-		// not working for fiji to kiribati??
-		if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
-			if (endTween.lng < 0) {
-				endTween.lng += 360;
-			} else {
-				startTween.lng += 360;
-			}
-		}
-
-		const dist = Math.abs( endTween.lng - startTween.lng) + Math.abs( endTween.lat - startTween.lat);
+		
+		const dist = distanceBetweenCoords(startTween,endTween);  // needed just to compute the time
 		console.log ("tween dist ", dist);
         // max is 180 + 90 = 270
 		let tweenTime = Math.max(1500, dist * 18);  // at least 1.5 second
@@ -513,60 +484,83 @@ function tour() {
 			tweenTime = Math.max(500, dist * 18); // at least 0.5 second
 		}
 		//console.log("Tween time is ", tweenTime);
+		//tweenCoords.lng = startTween.lng;
+		console.log( "created a tween from lng ", startTween.lng, " to ", endTween.lng);
+		console.log("Tween coords  lng is ", tweenCoords.lng);
+		fixStartLng(tweenCoords,endTween);
 		const tween= new Tween(tweenCoords)
 		
 		.easing(Easing.Quadratic.InOut)
 		.delay(200)
 		.to(endTween,tweenTime)
-		.onUpdate(() => {
-			const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
+		.onStart((e) => {
+			// update tweenCoords lng to work with endTween
+			fixStartLng(e,endTween);
+			console.log("starting tween at", tweenCoords);
+			console.log("Going to ", endTween);
+		})
+		.onUpdate((e) => {
+			const coords = Globe.getCoords(e.lat, e.lng, e.altitude);
 
-			//console.debug(' tween ', i , ' updated  new position is ', tweenCoords);
+			console.debug(' tween ', i , ' updated  new position lng is ', tweenCoords.lng);
 
 			camera.position.set(coords.x, coords.y, coords.z);
-			//console.debug(' tween ', i , ' updated  new camera position is ', camera.position);
+			console.debug(' tween ', i , ' updated  new camera position is ', camera.position);
 		}
 		);
 		if ((coordArray.length-1)==i) {
 			tween.onComplete(() => {
-				animatingTour = false;
+				State.animatingTour = false;
 				enableRotate(true); 
 				disableTourButton(false);
 				console.log("Animating tour completed")
 			})
 		}
 
+		if ((coordArray.length-1)>i) {
+			// make tweenCoords ready for next endTween
+			fixStartLng(tweenCoords,coordArray[i+1]);
+		}
+
 		if (startTween != endTween) {
 
-        	tourTweens.push(tween);
+        	State.tourTweens.push(tween);
 		}
-		console.log( "created a tween from ", startTween, " to ", endTween);
-		startTween = endTween;  // set it for next loop
+		console.log( "created a tween from ", startTween.lng, " to ", endTween.lng);
+		//startTween = endTween;  // set it for next loop
+
+		Object.assign( startTween, endTween);
+
 	}
 
 	// now chain the tweens in the array
-	for(let i =0; i < tourTweens.length-1; i++) {
-		tourTweens[i].chain( tourTweens[i+1]);
+	for(let i =0; i < State.tourTweens.length-1; i++) {
+		State.tourTweens[i].chain( State.tourTweens[i+1]);
 	}
 
-	tourTweens[0].start();
+	Object.assign( tweenCoords,  Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z}));
+	
+
+	State.tourTweens[0].start();
 	
 
 }
 
+
+
 function resetGameState() {
 
-	answerIndex = Math.floor(Math.random() * s.size);
-	answer = Array.from(s.values())[answerIndex];
-	// Xanswer_name = Array.from(s.keys())[answer_index];
-	countryList = [answer];
-	lastColor = 0;
+	State.answerIndex = Math.floor(Math.random() * s.size);
+	State.answer = Array.from(s.values())[State.answerIndex];
+	State.answer = "COK"; // repro
+	State.countryList = [State.answer];
+	State.lastColor = 0;
 
-	// renable country buttons
-	for (const b  of disabledCountryButtons ) {
+	// re-enable country buttons
+	for (const b  of State.disabledCountryButtons ) {
 		b.disabled = false;
 	}
-	disabledCountryButtons.length=0;
+	State.disabledCountryButtons.length=0;
 
 	const sp = document.querySelector("#pickedCountryList");
 	sp.innerHTML = "";
@@ -576,7 +570,7 @@ function resetGameState() {
 		delete element.color;
 	}
 
-	plotCountryGeometry(countryList);
+	plotCountryGeometry(State.countryList);
 }
 
 // Loop to handle user input
@@ -586,7 +580,7 @@ function resetGameState() {
 //
 // call plot to draw countries
 
-const disabledCountryButtons = []
+State.disabledCountryButtons = []
 
 function handleCountryButtonClick(event) {
 	console.log("handle country button click", event.target.innerHTML, event.target.value);
@@ -603,12 +597,12 @@ function handleCountryButtonClick(event) {
 
 	const oldText = event.target.innerHTML;
 	event.target.disabled = true;
-	disabledCountryButtons.push(event.target);
+	State.disabledCountryButtons.push(event.target);
 	console.log("button clicked ", event.target);
 
-	countryList.push(id);
+	State.countryList.push(id);
 
-	if (id === countryList[0]) {
+	if (id === State.countryList[0]) {
 		//   Alert('You win!');
 		const audio = new Audio('success.mp3');
 		audio.play();
@@ -622,7 +616,7 @@ function handleCountryButtonClick(event) {
 	
 	} */
 	stopTweens();
-	plotCountryGeometry(countryList);
+	plotCountryGeometry(State.countryList);
 
 }
 document.querySelector('#countries').addEventListener('click', (event) => {
@@ -631,7 +625,7 @@ document.querySelector('#countries').addEventListener('click', (event) => {
 	handleCountryButtonClick(event);
 });
 
-let rememberCountriesScrollPos=0;
+State.rememberCountriesScrollPos=0;
 
 function handleOpenClose(event) {
 	console.log("handle open close ", event.target.innerHTML);
@@ -642,13 +636,13 @@ function handleOpenClose(event) {
 
 	if (oldText == "▸") {  // opening
 		event.target.innerHTML = "&blacktriangledown;"
-		console.log("Scrolling to ", rememberCountriesScrollPos);
+		console.log("Scrolling to ", State.rememberCountriesScrollPos);
 		countryList.style.height = "75%";
 		countries.style.visibility = "visible";
-		countries.scrollLeft = rememberCountriesScrollPos;
+		countries.scrollLeft = State.rememberCountriesScrollPos;
 
 	} else { // closing
-		rememberCountriesScrollPos = countries.scrollLeft;
+		State.rememberCountriesScrollPos = countries.scrollLeft;
 		event.target.innerHTML = "&blacktriangleright;"
 		countryList.style.height = "5%";
 		countries.style.visibility = "collapse";
@@ -719,7 +713,7 @@ function disableTourButton( dFlag ) {
 	document.querySelector('#tourButton').disabled=dFlag;
 }
 document.querySelector('#tourButton').addEventListener('click', () => {
-	if (animatingTour) {
+	if (State.animatingTour) {
 		return;
 	}
 	
@@ -736,28 +730,26 @@ document.querySelector('#resetbutton').addEventListener('click', () => {
 
 document.querySelector('#showanswerbutton').addEventListener('click', () => {
 	stopTweens();
-	countryList.push(answer);
+	State.countryList.push(State.answer);
 
 	const audio = new Audio('success.mp3');
 	audio.play();
 
-	plotCountryGeometry(countryList);
+	plotCountryGeometry(State.countryList);
 });
 
-plotCountryGeometry(countryList);
+plotCountryGeometry(State.countryList);
 
 function stopTweens() {
-	animatingMove=false;
-	animatingTour=false;
-	//tourTweens.forEach( t => t.stop());
-	tourTweens.forEach( t => t.pause());
-	if (tweenOne != undefined) {
-		//tweenOne.stop();
-		tweenOne.pause();
+	State.animatingMove=false;
+	State.animatingTour=false;
+	
+	State.tourTweens.forEach( t => t.pause());
+	if (State.tweenOne != undefined) {
+		State.tweenOne.pause();
 	}
-	if (tweenTwo != undefined)	 {
-		//tweenTwo.stop();
-		tweenTwo.pause();
+	if (State.tweenTwo != undefined)	 {
+		State.tweenTwo.pause();
 	}
 	disableTourButton(false);
 }
@@ -806,14 +798,14 @@ function animate(time) {// IIFE
 	
 	
 	// Frame cycle
-	if (animatingTour) {
-		tourTweens.forEach( t => t.update(time));
+	if (State.animatingTour) {
+		State.tourTweens.forEach( t => t.update(time));
 		//console.log("animate look check tour tweens " , checkTourAnimating());
 
 	}
-	if (animatingMove) {
-		tweenOne.update(time);
-		tweenTwo.update(time);
+	if (State.animatingMove) {
+		State.tweenOne.update(time);
+		State.tweenTwo.update(time);
 	}
 
 	tbControls.update();
