@@ -6,7 +6,6 @@ import {OrbitControls} from 'https://unpkg.com/three/examples/jsm/controls/Orbit
 //  reset game state
 //  Game Loop
 
-
 class State {
     // data
 	static answerIndex;
@@ -25,9 +24,7 @@ class State {
 
 	static animatingTour = false;
 	static animatingMove = false; 
-
-}
-
+};
 
 import {getJson,distanceBetweenCoords,fixStartLng} from "./utils_helper.js";
 
@@ -52,12 +49,12 @@ const map = new Map();
 for (const element of countries.features) {
 	// Console.log(element.properties.NAME, ' ', element.properties.ISO_A3_EH);
 	// add it to the iso-select options
-	if (element.properties.ISO_A3_EH !== '-99') {
+//	if (element.properties.ISO_A3_EH !== '-99') {
 		// Name is a bit brief, NAME_CIAWF can be null, NAME_SORT is ascii, NAME_LONG
 		map.set(element.properties.NAME_LONG, element.properties.ISO_A3_EH);
-	}
+//	}
 	// log country polygon info
-	logPolygonInfo(element);
+	//logPolygonInfo(element);
 }
 
 function logPolygonInfo( e) {
@@ -225,9 +222,6 @@ function getLabelOffsetForSize(s) {
 
 const colorsHighway = ['#a6001a', '#633517', '#e06000', '#ee9600', '#004d33', '#00477e'];
 
-//let State.tweenOne;
-//let State.tweenTwo;
-
 function plotCountryGeometry(clist) {
 	// Const won = clist.clist.length > 1 && (clist[0] === clist[clist.length -1]);
 	const won = clist.lastIndexOf(clist[0]) > 0;
@@ -235,43 +229,26 @@ function plotCountryGeometry(clist) {
 
 	// Last county on list, we'll point the camera at it
 	const thisCountryIso = clist.at(-1);
-
-	// X const index = findIndexOfCountry(countries, thisCountryIso);
-
-	const targetCountry = findIndexOfCountry(countries, clist[0]);
-	const targetLoc = getBboxCenter(countries.features[targetCountry]);
-
-	// Const index_small = findIndexOfCountry(countries_small, thisCountryIso);
-
+	//const targetCountry = findIndexOfCountry(countries, clist[0]);
+	//const targetLoc = getBboxCenter(countries.features[targetCountry]);
 	const thisc = countries.features.find(d => thisCountryIso === d.properties.ISO_A3_EH);
 
 	thisc.altitude = countryAltitude;
-
-	const loc = getBboxCenter(thisc);
-
-	const point1 = turf.point(targetLoc);
-	const point2 = turf.point(loc);
-
-	const bear = turf.bearing(point2, point1);
-	const distribution = turf.distance(point1, point2);
-
-	const geo = thisc.geometry;
+	//const geo = thisc.geometry;
 	// Compute bbox size for zoom
 	const bboxsize = getBboxSize(thisc);
 	const rad = getZoomForSize(bboxsize);
 	setRotateSpeedFromRadius(rad);
 
 	console.log('bbox area is', thisc.properties.NAME_LONG, bboxsize, rad);
-	// Try bbox for center instead
 
 	const center = getBboxCenter(thisc);
-
 	const coords = Globe.getCoords(center[1], center[0], rad);  // lat, lng, altitude
 	// stash the camera coords 
 	thisc.cameraCoords = coords;
 
-	console.log('move camera to', center, rad);
-	console.log('move camera to coords', coords);
+	//console.log('move camera to', center, rad);
+	//console.log('move camera to coords', coords);
 
 	// geo coords have altitude lat lng
 	const startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
@@ -282,13 +259,13 @@ function plotCountryGeometry(clist) {
 
 	const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
 	// If longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
-	if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
+/*	if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
 		if (endTween.lng < 0) {
 			endTween.lng += 360;
 		} else {
 			startTween.lng += 360;
 		}
-	}
+	}*/
 
 	console.log('end+tween', endTween);
 	const tweenCoords = startTween;
@@ -307,14 +284,12 @@ function plotCountryGeometry(clist) {
 
 	 State.tweenTwo = new Tween(tweenCoords)
 	.easing(Easing.Quadratic.InOut)
-	//.to(midTween)
-	//.chain(midTween)
 	.easing(Easing.Quadratic.InOut)
 	.delay(200)
 	.to(endTween)
 	.onUpdate(() => {
 		const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
-		console.log("tween lng ", tweenCoords.lng);
+		//console.log("tween lng ", tweenCoords.lng);
 
 		camera.position.set(coords.x, coords.y, coords.z);
 		//console.log(' tween updated  new camera poistion is ', camera.position);
@@ -349,7 +324,6 @@ function plotCountryGeometry(clist) {
 	}
 
 	Globe.polygonsData(c).polygonCapColor('color');
-
 	Globe.polygonsData(c).polygonAltitude('altitude');
 
 	// label each country
@@ -412,10 +386,6 @@ localStorage.setItem(itemHistory, histString);
 // Let answer_name = Array.from(s.keys())[answer_index];
 State.countryList = [State.answer];
 
-//let State.tourTweens = [];  // needed by animate
-//State.animatingTour = false;
-//let State.animatingMove = false;  // used by plot country tweens
-
 function tour() {
 
 	console.log(" tour button disabled ", document.querySelector('#tourButton').disabled );
@@ -432,10 +402,8 @@ function tour() {
     State.animatingTour = true;
 
 	let coordArray = []; // country camera coords
-
-	//let startCoords = [];
-	let endCoords = [];
-	let tweenCoords = [];
+	let endCoords = []; // end coords for each tween
+	let tweenCoords = []; // the coord updated by each tween
 
 	console.log(State.countryList);
 
@@ -446,7 +414,6 @@ function tour() {
 		const geocoords = Globe.toGeoCoords({x: cameraCoords.x, y: cameraCoords.y, z: cameraCoords.z});
 		//console.log(geocoords);
 		coordArray.push( geocoords);
-		// country.cameraCoords is xyz
 	}
 	// visit the target at the end, too
 	if (coordArray.length >= 2) {
@@ -462,22 +429,12 @@ function tour() {
 		tweenCoords.push( structuredClone(endCoords[i-1]));
 	}
 	let startCoords = tweenCoords;
-
-	//let coords; 
-
-	let startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
-
-//	let tweenCoords = structuredClone(startTween); // tweenCoords is used by each tween in turn
 	
 	State.tourTweens = [] // empty out tweeens from last time!
-	
   
 	// last tween on chain should set animatingTour to false
 	for(let i =0; i < coordArray.length; i++) {
-		
-		//const endTween = coordArray[i];
-		
-	//	const dist = distanceBetweenCoords(startTween,endTween);  // needed just to compute the time
+
 	    const dist = distanceBetweenCoords(startCoords[i],endCoords[i]);  
 		console.log ("tween dist ", dist);
         // max is 180 + 90 = 270
@@ -487,27 +444,19 @@ function tour() {
 		}
 		//console.log("Tween time is ", tweenTime);
 		//tweenCoords.lng = startTween.lng;
-		console.log( "created a tween from lng ", startCoords[i].lng, " to ", endCoords[i].lng);
-		console.log("Tween coords  lng is ", tweenCoords[i].lng);
+		//console.log( "created a tween from lng ", startCoords[i].lng, " to ", endCoords[i].lng);
+		//console.log("Tween coords  lng is ", tweenCoords[i].lng);
 		fixStartLng(tweenCoords[i],endCoords[i]);
 		const tween= new Tween(tweenCoords[i])
 		
 		.easing(Easing.Quadratic.InOut)
 		.delay(200)
 		.to(endCoords[i],tweenTime)
-		.onStart((e) => {
-			// update tweenCoords lng to work with endTween
-			//fixStartLng(e,endCoords[i]);
-			console.log("starting tween at", tweenCoords[i]);
-			console.log("Going to ", endCoords[i]);
-		})
 		.onUpdate((e) => {
 			const coords = Globe.getCoords(e.lat, e.lng, e.altitude);
-
-			console.debug(' tween ', i , ' updated  new position lng is ', e);
-
+			//console.debug(' tween ', i , ' updated  new position lng is ', e);
 			camera.position.set(coords.x, coords.y, coords.z);
-			console.debug(' tween ', i , ' updated  new camera position is ', camera.position);
+			//console.debug(' tween ', i , ' updated  new camera position is ', camera.position);
 		}
 		);
 		if ((coordArray.length-1)==i) {
@@ -519,20 +468,11 @@ function tour() {
 			})
 		}
 
-	//	if ((coordArray.length-1)>i) {
-			// make tweenCoords ready for next endTween
-	//		fixStartLng(tweenCoords,coordArray[i+1]);
-//		}
-
 		if (startCoords[i] != endCoords[i]) {
 
         	State.tourTweens.push(tween);
 		}
-		console.log( "created a tween from ", startCoords[i].lng, " to ", endCoords[i].lng);
-		//startTween = endTween;  // set it for next loop
-
-		//Object.assign( startTween, endTween);
-
+		//console.log( "created a tween from ", startCoords[i].lng, " to ", endCoords[i].lng);
 	}
 
 	// now chain the tweens in the array
@@ -540,21 +480,13 @@ function tour() {
 		State.tourTweens[i].chain( State.tourTweens[i+1]);
 	}
 
-	Object.assign( tweenCoords,  Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z}));
-	
-
 	State.tourTweens[0].start();
-	
-
 }
 
-
-
 function resetGameState() {
-
 	State.answerIndex = Math.floor(Math.random() * s.size);
 	State.answer = Array.from(s.values())[State.answerIndex];
-	State.answer = "COK"; // repro
+	//State.answer = "COK"; // repro
 	State.countryList = [State.answer];
 	State.lastColor = 0;
 
@@ -606,8 +538,8 @@ function handleCountryButtonClick(event) {
 
 	if (id === State.countryList[0]) {
 		//   Alert('You win!');
-		const audio = new Audio('success.mp3');
-		audio.play();
+		//const audio = new Audio('success.mp3');
+		//audio.play();
 		throwConfetti();
 	}
 	/*
@@ -734,8 +666,8 @@ document.querySelector('#showanswerbutton').addEventListener('click', () => {
 	stopTweens();
 	State.countryList.push(State.answer);
 
-	const audio = new Audio('success.mp3');
-	audio.play();
+	//const audio = new Audio('success.mp3');
+	//audio.play();
 
 	plotCountryGeometry(State.countryList);
 });
@@ -798,12 +730,10 @@ function animate(time) {// IIFE
 		setRotateSpeedFromRadius(radius);
 	}
 	
-	
 	// Frame cycle
 	if (State.animatingTour) {
 		State.tourTweens.forEach( t => t.update(time));
 		//console.log("animate look check tour tweens " , checkTourAnimating());
-
 	}
 	if (State.animatingMove) {
 		State.tweenOne.update(time);
@@ -814,8 +744,6 @@ function animate(time) {// IIFE
 	resizeCanvasToDisplaySize(canvas);
 	renderer.render(scene, camera);
 	requestAnimationFrame(animate);
-	
 }
 
-// Remove fetch });
 export {animate, countries};
