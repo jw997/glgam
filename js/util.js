@@ -461,6 +461,7 @@ function tour() {
 	for(let i =1; i < coordArray.length; i++) {
 		tweenCoords.push( structuredClone(endCoords[i-1]));
 	}
+	let startCoords = tweenCoords;
 
 	//let coords; 
 
@@ -474,9 +475,10 @@ function tour() {
 	// last tween on chain should set animatingTour to false
 	for(let i =0; i < coordArray.length; i++) {
 		
-		const endTween = coordArray[i];
+		//const endTween = coordArray[i];
 		
-		const dist = distanceBetweenCoords(startTween,endTween);  // needed just to compute the time
+	//	const dist = distanceBetweenCoords(startTween,endTween);  // needed just to compute the time
+	    const dist = distanceBetweenCoords(startCoords[i],endCoords[i]);  
 		console.log ("tween dist ", dist);
         // max is 180 + 90 = 270
 		let tweenTime = Math.max(1500, dist * 18);  // at least 1.5 second
@@ -485,24 +487,24 @@ function tour() {
 		}
 		//console.log("Tween time is ", tweenTime);
 		//tweenCoords.lng = startTween.lng;
-		console.log( "created a tween from lng ", startTween.lng, " to ", endTween.lng);
-		console.log("Tween coords  lng is ", tweenCoords.lng);
-		fixStartLng(tweenCoords,endTween);
-		const tween= new Tween(tweenCoords)
+		console.log( "created a tween from lng ", startCoords[i].lng, " to ", endCoords[i].lng);
+		console.log("Tween coords  lng is ", tweenCoords[i].lng);
+		fixStartLng(tweenCoords[i],endCoords[i]);
+		const tween= new Tween(tweenCoords[i])
 		
 		.easing(Easing.Quadratic.InOut)
 		.delay(200)
-		.to(endTween,tweenTime)
+		.to(endCoords[i],tweenTime)
 		.onStart((e) => {
 			// update tweenCoords lng to work with endTween
-			fixStartLng(e,endTween);
-			console.log("starting tween at", tweenCoords);
-			console.log("Going to ", endTween);
+			//fixStartLng(e,endCoords[i]);
+			console.log("starting tween at", tweenCoords[i]);
+			console.log("Going to ", endCoords[i]);
 		})
 		.onUpdate((e) => {
 			const coords = Globe.getCoords(e.lat, e.lng, e.altitude);
 
-			console.debug(' tween ', i , ' updated  new position lng is ', tweenCoords.lng);
+			console.debug(' tween ', i , ' updated  new position lng is ', e);
 
 			camera.position.set(coords.x, coords.y, coords.z);
 			console.debug(' tween ', i , ' updated  new camera position is ', camera.position);
@@ -517,19 +519,19 @@ function tour() {
 			})
 		}
 
-		if ((coordArray.length-1)>i) {
+	//	if ((coordArray.length-1)>i) {
 			// make tweenCoords ready for next endTween
-			fixStartLng(tweenCoords,coordArray[i+1]);
-		}
+	//		fixStartLng(tweenCoords,coordArray[i+1]);
+//		}
 
-		if (startTween != endTween) {
+		if (startCoords[i] != endCoords[i]) {
 
         	State.tourTweens.push(tween);
 		}
-		console.log( "created a tween from ", startTween.lng, " to ", endTween.lng);
+		console.log( "created a tween from ", startCoords[i].lng, " to ", endCoords[i].lng);
 		//startTween = endTween;  // set it for next loop
 
-		Object.assign( startTween, endTween);
+		//Object.assign( startTween, endTween);
 
 	}
 
