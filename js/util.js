@@ -26,7 +26,10 @@ class State {
 	static animatingMove = false; 
 };
 
-import {getJson,distanceBetweenCoords,fixStartLng} from "./utils_helper.js";
+import {getJson,distanceBetweenCoords,fixStartLng,nextRand,seed, 
+	getHistory,addHistory,throwConfetti,findIndexOfCountry,logPolygonInfo,
+	getBoxForFeature, getBboxSize, getBboxCenter, getZoomForSize, getLabelForSize, getLabelOffsetForSize
+} from "./utils_helper.js";
 
 const geojsonfile = './data/final.geojson';
 const countries = await getJson(geojsonfile);
@@ -57,28 +60,7 @@ for (const element of countries.features) {
 	//logPolygonInfo(element);
 }
 
-function logPolygonInfo( e) {
-	const g = e.geometry;
-	const t = e.geometry.type;
-//	console.log(e.properties.ISO_A3_EH, e.properties.NAME_LONG, e.geometry.type);
-	const areas = [];
 
-	if ("Polygon" == t) {
-		const a = turf.area( turf.polygon([g.coordinates[0]]));
-
-		areas.push(Math.round(a/1000000));
-	}
-	if ("MultiPolygon" == t) {
-	//	console.log("polygon count: ", g.coordinates.length);
-		for (let i=0; i< g.coordinates.length; i++) {
-			let p= g.coordinates[i][0];
-		    let a = turf.area( turf.polygon([p]));
-			areas.push(Math.round(a/1000000));
-		}
-	}
-	const msg = "" + e.properties.ISO_A3_EH + " " + e.properties.NAME_LONG + " " + e.geometry.type + " " + areas;
-	console.log(msg);
-}
 
 // Sort country list and populate select
 const s = new Map([...map.entries()].sort(Intl.Collator(undefined).compare));
@@ -93,114 +75,8 @@ for (const [key, value] of s.entries()) {
 	countriesFlexbox.append(b);
 }
 
-function throwConfetti() {
-	confetti({
-		particleCount: 100,
-		spread: 70,
-		origin: { y: 0.6 },
-	  });
-}
 
-function findIndexOfCountry(c, iso) {
-	for (let i = 0; i < c.features.length; i++) {
-		if (c.features[i].properties.ISO_A3_EH === iso) {
-			return i;
-		}
-	}
-	return undefined;
-}
 
-// Override bboxes for some countries, like widely disperesed islands
-const boxes = new Map();
-boxes.set("ASM",  [	-171,	-14.7,	-168,	-13.75  ]); // American Samo
-boxes.set("IOT",  [	72.2, -7.6,	72.6, -7.07  ]); // British Indian Ocean Territory
-boxes.set("KIR",  [	-160.41, 0.44,	-159.44, 4.35  ]); // Kiribati
-boxes.set("SYC",  [	54.75, -5.3,	56.8, -3.4  ]); // Seychelles, capital Victoria
-boxes.set("TUV",  [	179.14, -8.6,	179.3, -8.43  ]); // Tuvalu, capital Funafuti
-boxes.set("COK",  [	-160, -22.1, -157.2, -18.8  ]); // Cook Islands, capital Avarua
-boxes.set("FJI",  [	177.2, -19, 179.9, -16  ]); // Fiji, capital Suva
-boxes.set("FSM",  [	157.7, 6.3, 159, 7.3  ]); // Fed Sts of Micronesia, capital Palikir
-boxes.set("PYF",  [	-151.7, -18, -150, -16  ]); // French Polynesia, capital Papeete
-boxes.set("MDV",  [	73.4, 4.1, 73.7, 4.4  ]); // Maldives, capital Male
-boxes.set("MHL",  [	170.9, 6.8, 172.2, 7.3  ]); // Marshall Islands, capital Majuro
-boxes.set("MUS",  [	57, -20.9, 63.6, -19  ]); // Mauritius, capital Port Louis, maybe just left island?
-boxes.set("PLW",  [	133.9, 6.6, 134.7, 8.1  ]); // Palau, capital 	Ngerulmud
-boxes.set("SHN",  [	-6.3, -16.2, -5.3, -15.3  ]); // Saint Helena, capital 	Jamestown
-boxes.set("SGS",  [	 -38.4, -55.3, -36 , -53.5 ]); // South Georgia, capital 
-boxes.set("TON",  [	 -175.53, -21.6, -174.8, -21 ]); // Tonga, capital Nukuʻalofa
-boxes.set("TUV",  [	 179, -8.6, 179.2, -8.4 ]); // Tuvalu, capital Funafuti
-
-function getBoxForFeature( feat ) {
-	const code = feat.properties.ISO_A3_EH;
-	const box = boxes.get(code);
-	if (box) {
-		console.log("Overriding bbox for " + code + " with " + box +  " instead of " + feat.bbox);
-	}
-	const retval = box ?? feat.bbox;
-	return retval;
-}
-
-function getBboxSize(feat) {
-	const box = getBoxForFeature(feat);
-	let area = Math.abs(box[2] - box[0]) * (box[3] - box[1]);  // use turf?
-
-	if (box[0] > 0 && box[2] < 0) { // cross the date line 
-	    area = Math.abs(360 + box[2] - box[0]) * (box[3] - box[1]);  // use turf?
-	} 
-
-	console.log("Box area for " + feat.properties.ISO_A3_EH + " " + area);
-	return area;
-}
-
-function getBboxCenter(feat) {
-	const box = getBoxForFeature(feat);
-	const center = [(box[2] + box[0]) / 2, (box[3] + box[1]) / 2];
-
-	if (box[0] > 0 && box[2] < 0) {
-		center[0] += 180;
-	}
-
-	return center;
-}
-
-// Give a bbox size, pick a height above earth surface in earth radius units
-function getZoomForSize(s) {
-	if (s < 0.001) {
-		return 0.01;
-	}
-	if (s < 1) {
-		return 0.05;
-	}
-	if (s < 10) {
-		return 0.1;
-	}
-	if (s < 100) {
-		return 0.5;
-	}
-	return 1.25;
-}
-
-function getLabelForSize(s) {
-	if (s < 0.001) {
-		return 0.005;
-	}
-	if (s < 1) {
-		return 0.05;
-	}
-	if (s < 10) {
-		return 0.1;
-	}
-	if (s < 100) {
-		return 0.5;
-	}
-	return 1.25;
-}
-function getLabelOffsetForSize(s) {
-	if (s < 0.001) {
-		return 0.01;
-	}
-	return 0.4;
-}
 
 /* https://www.w3schools.com/colors/colors_fs595.asp
 	  (10055)	w3-highway-brown	#633517
@@ -252,21 +128,9 @@ function plotCountryGeometry(clist) {
 
 	// geo coords have altitude lat lng
 	const startTween = Globe.toGeoCoords({x: camera.position.x, y: camera.position.y, z: camera.position.z});
-	
 	const endTween = {lng: center[0], lat: center[1], altitude: rad};
-
 	fixStartLng(startTween, endTween);
-
 	const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
-	// If longitutdes have opposite signs are are more than 180 degrees apart, add 360 to the negative one
-/*	if (startTween.lng * endTween.lng < 0 && Math.abs(endTween.lng - startTween.lng) > 180) {
-		if (endTween.lng < 0) {
-			endTween.lng += 360;
-		} else {
-			startTween.lng += 360;
-		}
-	}*/
-
 	console.log('end+tween', endTween);
 	const tweenCoords = startTween;
 
@@ -290,7 +154,6 @@ function plotCountryGeometry(clist) {
 	.onUpdate(() => {
 		const coords = Globe.getCoords(tweenCoords.lat, tweenCoords.lng, tweenCoords.altitude);
 		//console.log("tween lng ", tweenCoords.lng);
-
 		camera.position.set(coords.x, coords.y, coords.z);
 		//console.log(' tween updated  new camera poistion is ', camera.position);
 	})
@@ -315,7 +178,6 @@ function plotCountryGeometry(clist) {
 	// Give each country a color
 	for (const element of c) {
 		if (undefined === element.color) {
-			// C[i].color = colors[Math.round(Math.random() * colors.length)];
 			element.color = colorsHighway[State.lastColor];
 			State.lastColor = 1 + ((State.lastColor + 1) % (colorsHighway.length - 1)); // Save red for target
 
@@ -344,7 +206,7 @@ function plotCountryGeometry(clist) {
 		});
 
 		if (!won && element.properties.ISO_A3_EH === clist[0]) {
-			// Erase the name
+			// Erase the name of the mystery country
 			labelData[i].name = '?';
 		}
 	}
@@ -363,25 +225,9 @@ function plotCountryGeometry(clist) {
 // retrieve array of old guesses
 // history is a string of comma separated ISO A3 3 letter codes
 
-const itemHistory = 'History';
-
-let histString = localStorage.getItem(itemHistory);
-histString ??= '';
-
-do {
-	State.answerIndex = Math.floor(Math.random() * s.size);
-	State.answer = Array.from(s.values())[State.answerIndex];
-} while (histString.includes(State.answer));
-
-// Save the new History, but only the last X entries
-const histLimit = 100;
-if (histString.length > (4 * histLimit)) {
-	histString = histString.slice(4);
-}
-
-histString += ' ';
-histString += State.answer;
-localStorage.setItem(itemHistory, histString);
+State.answerIndex = nextRand(s.size);  // deterministic on todays date
+State.answer = Array.from(s.values())[State.answerIndex];
+seed( Math.random());  // random for restart button
 
 // Let answer_name = Array.from(s.keys())[answer_index];
 State.countryList = [State.answer];
@@ -484,9 +330,14 @@ function tour() {
 }
 
 function resetGameState() {
-	State.answerIndex = Math.floor(Math.random() * s.size);
-	State.answer = Array.from(s.values())[State.answerIndex];
-	//State.answer = "COK"; // repro
+	const history = getHistory();
+	do {
+		State.answerIndex = nextRand(s.size); 
+		State.answer = Array.from(s.values())[State.answerIndex];
+	} while (history.includes(State.answer));
+
+	addHistory(State.answer);
+
 	State.countryList = [State.answer];
 	State.lastColor = 0;
 
@@ -524,12 +375,7 @@ function handleCountryButtonClick(event) {
 		return;
 	}
 	const id = event.target.value;
-
-	//const sp = document.querySelector("#pickedCountryList");
-	//sp.innerHTML = event.target.innerHTML + " " + sp.innerHTML;
-
-
-	const oldText = event.target.innerHTML;
+	//const oldText = event.target.innerHTML;
 	event.target.disabled = true;
 	State.disabledCountryButtons.push(event.target);
 	console.log("button clicked ", event.target);
@@ -542,13 +388,6 @@ function handleCountryButtonClick(event) {
 		//audio.play();
 		throwConfetti();
 	}
-	/*
-	If (countryList.length > 6) {
-	// Globe.showGraticules(true);
-	const msg = 'you lose it was '.concat(answer_name);
-	//   alert(msg);
-	
-	} */
 	stopTweens();
 	plotCountryGeometry(State.countryList);
 
@@ -627,20 +466,18 @@ function getOrbitControls( cam, dom) {
 
 }
 
-//const tbControls = getTrackBallControls(camera, renderer.domElement);
-
-const tbControls = getOrbitControls(camera, renderer.domElement);
+const orbitControls = getOrbitControls(camera, renderer.domElement);
 
 function setRotateSpeedFromRadius( z ) {
 	//console.log("Setting rotate speed to ", z/4);
-	tbControls.rotateSpeed = z/4;
+	orbitControls.rotateSpeed = z/4;
 }
 
 // call at beginning and end of animations
 function enableRotate(b) {
-	console.log("controls enabledRotate at ", tbControls.enableRotate);
-	tbControls.enableRotate = b;
-	console.log("controls enabledRotate set to ", tbControls.enableRotate);
+	//console.log("controls enabledRotate at ", orbitControls.enableRotate);
+	orbitControls.enableRotate = b;
+	//console.log("controls enabledRotate set to ", orbitControls.enableRotate);
 }
 
 function disableTourButton( dFlag ) {
@@ -740,10 +577,10 @@ function animate(time) {// IIFE
 		State.tweenTwo.update(time);
 	}
 
-	tbControls.update();
+	orbitControls.update();
 	resizeCanvasToDisplaySize(canvas);
 	renderer.render(scene, camera);
 	requestAnimationFrame(animate);
 }
 
-export {animate, countries};
+export {animate};
