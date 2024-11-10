@@ -28,7 +28,7 @@ class State {
 
 import {getJson,distanceBetweenCoords,fixStartLng,nextRand,seed, 
 	getHistory,addHistory,throwConfetti,findIndexOfCountry,logPolygonInfo,
-	getBoxForFeature, getBboxSize, getBboxCenter, getZoomForSize, getLabelForSize, getLabelOffsetForSize
+	getBoxForFeature, getBboxSize, getBboxCenter, getZoomForSize, getLabelForSize, getLabelOffsetForSize, getNeighbors
 } from "./utils_helper.js";
 
 const geojsonfile = './data/final.geojson';
@@ -60,19 +60,41 @@ for (const element of countries.features) {
 	//logPolygonInfo(element);
 }
 
+// set the altitude and camera coords for each country
+for (const element of countries.features) {
+	element.altitude = countryAltitude;
+	//const geo = thisc.geometry;
+	// Compute bbox size for zoom
+	const bboxsize = getBboxSize(element);
+	const rad = getZoomForSize(bboxsize);
+
+	console.log('bbox area is', element.properties.NAME_LONG, bboxsize, rad);
+
+	const center = getBboxCenter(element);
+	const coords = Globe.getCoords(center[1], center[0], rad);  // lat, lng, altitude
+	// stash the camera coords 
+	element.cameraCoords = coords;
+}
+
 
 
 // Sort country list and populate select
-const s = new Map([...map.entries()].sort(Intl.Collator(undefined).compare));
+const sortedCountryMap = new Map([...map.entries()].sort(Intl.Collator(undefined).compare));
+
+// keep track of valid iso31663 codes
+const setIsoCodes = new Set();
 
 // put countries in the flex box 
 const countriesFlexbox = document.querySelector('#countries');
-for (const [key, value] of s.entries()) {
+for (const [key, value] of sortedCountryMap.entries()) {
 	//  Console.log(key, ' ', value);
 	const b = document.createElement('button');
 	b.value = value;
 	b.innerHTML = key;
 	countriesFlexbox.append(b);
+
+	// add to code set
+	setIsoCodes.add(value);
 }
 
 
@@ -109,7 +131,7 @@ function plotCountryGeometry(clist) {
 	//const targetLoc = getBboxCenter(countries.features[targetCountry]);
 	const thisc = countries.features.find(d => thisCountryIso === d.properties.ISO_A3_EH);
 
-	thisc.altitude = countryAltitude;
+	// precomputed thisc.altitude = countryAltitude;
 	//const geo = thisc.geometry;
 	// Compute bbox size for zoom
 	const bboxsize = getBboxSize(thisc);
@@ -225,8 +247,8 @@ function plotCountryGeometry(clist) {
 // retrieve array of old guesses
 // history is a string of comma separated ISO A3 3 letter codes
 
-State.answerIndex = nextRand(s.size);  // deterministic on todays date
-State.answer = Array.from(s.values())[State.answerIndex];
+State.answerIndex = nextRand(sortedCountryMap.size);  // deterministic on todays date
+State.answer = Array.from(sortedCountryMap.values())[State.answerIndex];
 seed( Math.random());  // random for restart button
 
 // Let answer_name = Array.from(s.keys())[answer_index];
@@ -332,8 +354,8 @@ function tour() {
 function resetGameState() {
 	const history = getHistory();
 	do {
-		State.answerIndex = nextRand(s.size); 
-		State.answer = Array.from(s.values())[State.answerIndex];
+		State.answerIndex = nextRand(sortedCountryMap.size); 
+		State.answer = Array.from(sortedCountryMap.values())[State.answerIndex];
 	} while (history.includes(State.answer));
 
 	addHistory(State.answer);
@@ -387,6 +409,27 @@ function handleCountryButtonClick(event) {
 		//const audio = new Audio('success.mp3');
 		//audio.play();
 		throwConfetti();
+		// look up neighbors
+		const neighbors = getNeighbors(id);
+		if (neighbors) {
+			for(let i=0; i< neighbors.length; i++) {
+				// make sure neighbor is in the list of countries
+				
+				if (setIsoCodes.has(neighbors[i])) {
+					console.log("adding neighgors ", neighbors[i]);
+
+					// insert them before the final country we just guessed
+					const last = State.countryList.pop();
+					State.countryList.push(neighbors[i]);
+					State.countryList.push(last);
+
+				} else {
+					console.log("Undefined neighbor ", neighbors[i]);
+				}
+			}
+		} else {
+			console.log("No neighbor entry for ", id);
+		}
 	}
 	stopTweens();
 	plotCountryGeometry(State.countryList);

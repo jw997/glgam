@@ -1,0 +1,2494 @@
+Abkhazia
+2
+3
+3
+Georgia
+Russia
+Turkey
+French Southern and Antarctic Lands
+1
+1
+1
+Australia
+Afghanistan
+6
+0
+6
+China
+Iran
+Pakistan
+Tajikistan
+Turkmenistan
+Uzbekistan
+United Kingdom
+1
+1
+1
+Cyprus
+UN
+Albania
+4
+3
+5
+Greece
+Italy
+Montenegro
+North Macedonia
+Kosovo
+Algeria
+7
+4
+9
+Italy
+Libya
+Mali
+Mauritania
+Morocco
+Niger
+Spain
+Tunisia
+American Samoa
+0
+3
+3
+Samoa
+Tonga
+Cook Islands
+Niue
+Tokelau
+Andorra
+2
+0
+2
+France
+Spain
+Angola
+4
+3
+4
+Democratic Republic of the Congo
+Republic of the Congo
+Namibia
+Zambia
+Anguilla
+0
+4
+4
+Antigua and Barbuda
+British Virgin Islands
+Netherlands
+Saint Barthélemy
+France
+United States Virgin Islands
+Antigua and Barbuda
+0
+3
+3
+France
+Saint Kitts and Nevis
+Anguilla
+Montserrat
+France
+Argentina
+5
+3
+6
+Bolivia
+Brazil
+Chile
+Paraguay
+Uruguay
+Falkland Islands
+Argentine Antarctica
+2
+2
+2
+Armenia
+4
+0
+4
+Azerbaijan
+Georgia
+Iran
+Turkey
+Aruba
+0
+2
+2
+Curaçao
+Dominican Republic
+Venezuela
+Ashmore and Cartier Islands
+0
+2
+2
+Australia
+East Timor
+Indonesia
+Australia
+Ashmore and Cartier Islands
+Christmas Island
+Cocos (Keeling) Islands
+Coral Sea Islands
+Heard Island and McDonald Islands
+Norfolk Island
+0
+6
+6
+East Timor
+Indonesia
+New Zealand
+Papua New Guinea
+Solomon Islands
+French Southern and Antarctic Lands
+New Caledonia
+Australia
+0
+4
+4
+Ashmore and Cartier Islands
+Coral Sea Islands
+East Timor
+Indonesia
+New Zealand
+Papua New Guinea
+Australia
+3
+3
+3
+French Southern and Antarctic Lands
+Norway
+New Zealand
+Austria
+8
+0
+8
+Czech Republic
+Germany
+Hungary
+Italy
+Liechtenstein
+Slovakia
+Slovenia
+Switzerland
+Azerbaijan
+5
+4
+7
+Armenia
+Georgia
+Iran
+Kazakhstan
+Russia
+Turkey
+Turkmenistan
+Bahamas
+0
+4
+4
+Cuba
+Haiti
+United States
+Turks and Caicos Islands
+Bahrain
+0
+3
+3
+Iran
+Qatar
+Saudi Arabia
+United States
+0
+1
+1
+United States
+Kiribati
+Bangladesh
+2
+2
+2
+Myanmar
+India
+Barbados
+0
+6
+6
+France
+Guyana
+Saint Lucia
+Saint Vincent and the Grenadines
+Trinidad and Tobago
+Venezuela
+Belarus
+5
+0
+5
+Latvia
+Lithuania
+Poland
+Russia
+Ukraine
+Belgium
+4
+3
+5
+France
+Germany
+Luxembourg
+Netherlands
+United Kingdom
+Belize
+2
+3
+3
+Guatemala
+Honduras
+Mexico
+Benin
+4
+2
+4
+Burkina Faso
+Niger
+Nigeria
+Togo
+Bermuda
+0
+0
+0
+Bhutan
+2
+0
+2
+China
+India
+Bolivia
+5
+0
+5
+Argentina
+Brazil
+Chile
+Paraguay
+Peru
+Bosnia and Herzegovina
+3
+1
+3
+Croatia
+Montenegro
+Serbia
+Botswana
+4
+0
+4
+Namibia
+South Africa
+Zambia
+Zimbabwe
+Bouvet Island
+0
+0
+0
+Brazil
+10
+2
+10
+Argentina
+Bolivia
+Colombia
+France
+Guyana
+Paraguay
+Peru
+Suriname
+Uruguay
+Venezuela
+British Antarctic Territory
+3
+3
+3
+Norway
+British Indian Ocean Territory
+0
+1
+1
+Maldives
+British Virgin Islands
+0
+1
+1
+Anguilla
+Puerto Rico
+United States Virgin Islands
+Brunei
+1
+5
+5
+China
+Malaysia
+Philippines
+Taiwan
+Vietnam
+Bulgaria
+5
+4
+7
+Greece
+North Macedonia
+Romania
+Serbia
+Turkey
+Russia
+Ukraine
+Burkina Faso
+6
+0
+6
+Benin
+Côte d'Ivoire
+Ghana
+Mali
+Niger
+Togo
+Burundi
+3
+0
+3
+Democratic Republic of the Congo
+Rwanda
+Tanzania
+Cambodia
+3
+3
+3
+Laos
+Thailand
+Vietnam
+Cameroon
+6
+2
+6
+Central African Republic
+Chad
+Republic of the Congo
+Equatorial Guinea
+Gabon
+Nigeria
+Canada
+2
+3
+3
+United States
+Greenland
+Saint Pierre and Miquelon
+Cape Verde
+0
+3
+3
+The Gambia
+Mauritania
+Senegal
+Cayman Islands
+0
+3
+3
+Cuba
+Honduras
+Jamaica
+Central African Republic
+6
+0
+6
+Cameroon
+Chad
+Democratic Republic of the Congo
+Republic of the Congo
+South Sudan
+Sudan
+Chad
+6
+0
+6
+Cameroon
+Central African Republic
+Libya
+Niger
+Nigeria
+Sudan
+Chile
+3
+2
+3
+Argentina
+Bolivia
+Peru
+Chilean Antarctic Territory
+2
+3
+3
+Norway
+People's Republic of China
+Hong Kong
+Macau
+Taiwan
+14
+9
+23
+Afghanistan
+Bhutan
+Brunei
+India
+Indonesia
+Japan
+Kazakhstan
+North Korea
+South Korea
+Kyrgyzstan
+Laos
+Malaysia
+Mongolia
+Myanmar
+Nepal
+Pakistan
+Philippines
+Russia
+Tajikistan
+Vietnam
+Hong Kong
+Macau
+Taiwan
+Christmas Island
+0
+1
+1
+Indonesia
+Clipperton Island
+0
+0
+0
+Cocos (Keeling) Islands
+0
+0
+0
+Colombia
+5
+8
+10
+Brazil
+Costa Rica
+Dominican Republic
+Ecuador
+Haiti
+Jamaica
+Nicaragua
+Panama
+Peru
+Venezuela
+Comoros
+0
+5
+5
+France
+Madagascar
+Mozambique
+Seychelles
+Tanzania
+French Southern and Antarctic Lands
+Democratic Republic of the Congo
+9
+2
+9
+Angola
+Burundi
+Central African Republic
+Republic of the Congo
+Rwanda
+South Sudan
+Tanzania
+Uganda
+Zambia
+Republic of the Congo
+5
+3
+5
+Angola
+Cameroon
+Central African Republic
+Democratic Republic of the Congo
+Gabon
+Cook Islands
+0
+3
+3
+Kiribati
+American Samoa
+French Polynesia
+Niue
+Tokelau
+Coral Sea Islands
+0
+3
+3
+Australia
+New Caledonia
+Papua New Guinea
+Solomon Islands
+Costa Rica
+2
+4
+4
+Colombia
+Ecuador
+Nicaragua
+Panama
+Côte d'Ivoire
+5
+2
+5
+Burkina Faso
+Ghana
+Guinea
+Liberia
+Mali
+Croatia
+5
+4
+6
+Bosnia and Herzegovina
+Hungary
+Italy
+Montenegro
+Serbia
+Slovenia
+Cuba
+0
+7
+7
+Bahamas
+Haiti
+Honduras
+Jamaica
+Mexico
+United States
+Cayman Islands
+Curaçao
+0
+2
+2
+Dominican Republic
+Netherlands
+Venezuela
+Aruba
+Cyprus
+1
+8
+8
+Northern Cyprus
+Egypt
+Greece
+Israel
+Lebanon
+Syria
+Turkey
+United Kingdom
+UN
+Northern Cyprus
+1
+4
+4
+Cyprus
+Syria
+Turkey
+United Kingdom
+UN
+Czech Republic
+4
+0
+4
+Austria
+Germany
+Poland
+Slovakia
+Denmark
+1
+5
+5
+Germany
+Norway
+Poland
+Sweden
+United Kingdom
+Denmark
+Denmark
+Faroe Islands
+Greenland
+2
+7
+7
+Canada
+Germany
+Iceland
+Norway
+Poland
+Sweden
+United Kingdom
+Jan Mayen
+Svalbard
+Djibouti
+3
+3
+4
+Eritrea
+Ethiopia
+Somalia
+Yemen
+Dominica
+0
+2
+2
+France
+Venezuela
+Dominican Republic
+1
+6
+6
+Colombia
+Haiti
+Venezuela
+Aruba
+Curaçao
+Puerto Rico
+Turks and Caicos Islands
+East Timor
+1
+2
+2
+Australia
+Indonesia
+Ashmore and Cartier Islands
+Ecuador
+2
+3
+3
+Colombia
+Costa Rica
+Peru
+Egypt
+4
+9
+9
+Cyprus
+Greece
+Israel
+Jordan
+Libya
+Saudi Arabia
+Sudan
+Turkey
+Palestine
+El Salvador
+2
+3
+3
+Guatemala
+Honduras
+Nicaragua
+Equatorial Guinea
+2
+4
+4
+Cameroon
+Gabon
+Nigeria
+São Tomé and Príncipe
+Eritrea
+3
+4
+5
+Djibouti
+Saudi Arabia
+Sudan
+Ethiopia
+Yemen
+Estonia
+2
+4
+4
+Finland
+Latvia
+Russia
+Sweden
+Eswatininame=Eswatini (Swaziland)
+2
+0
+2
+Mozambique
+South Africa
+Ethiopia
+6
+0
+6
+Djibouti
+Eritrea
+Kenya
+Somalia
+South Sudan
+Sudan
+Falkland Islands
+0
+1
+1
+Argentina
+Faroe Islands
+0
+3
+3
+Iceland
+Norway
+United Kingdom
+Fiji
+0
+6
+6
+New Zealand
+Solomon Islands
+Tonga
+Tuvalu
+Vanuatu
+New Caledonia
+Wallis and Futuna
+Finland
+3
+3
+4
+Estonia
+Norway
+Russia
+Sweden
+France
+10
+15
+19
+Andorra
+Antigua and Barbuda
+Barbados
+Belgium
+Brazil
+Comoros
+Dominica
+Germany
+Italy
+Luxembourg
+Madagascar
+Mauritius
+Saint Lucia
+Spain
+Switzerland
+Suriname
+United Kingdom
+Venezuela
+French Southern and Antarctic Lands
+Guernsey
+Jersey
+Montserrat
+France
+Clipperton Island
+French Polynesia
+French Southern and Antarctic Lands
+New Caledonia
+Saint Barthélemy
+France
+Saint Pierre and Miquelon
+Wallis and Futuna
+11
+27
+31
+Andorra
+Antigua and Barbuda
+Barbados
+Belgium
+Brazil
+Canada
+Comoros
+Dominica
+Fiji
+Germany
+Italy
+Kiribati
+Luxembourg
+Madagascar
+Mauritius
+Mozambique
+Netherlands
+Saint Kitts and Nevis
+Saint Lucia
+Seychelles
+Solomon Islands
+Spain
+Suriname
+Switzerland
+Tonga
+Tuvalu
+United Kingdom
+Vanuatu
+Venezuela
+Anguilla
+Cook Islands
+Coral Sea Islands
+Guernsey
+Australia
+Jersey
+Montserrat
+Sint Maarten
+Norfolk Island
+Pitcairn Islands
+Tokelau
+French Polynesia
+0
+3
+3
+Kiribati
+Cook Islands
+Pitcairn Islands
+French Southern and Antarctic Lands
+0
+6
+6
+Comoros
+France
+Madagascar
+Mauritius
+Seychelles
+Heard Island and McDonald Islands
+Gabon
+3
+3
+4
+Cameroon
+Republic of the Congo
+Equatorial Guinea
+São Tomé and Príncipe
+The Gambia
+1
+2
+2
+Cape Verde
+Senegal
+Georgia
+4
+2
+4
+Armenia
+Azerbaijan
+Russia
+Turkey
+Germany
+9
+5
+11
+Austria
+Belgium
+Czech Republic
+Denmark
+France
+Luxembourg
+Netherlands
+Poland
+Sweden
+Switzerland
+United Kingdom
+Ghana
+3
+2
+3
+Burkina Faso
+Côte d'Ivoire
+Togo
+Gibraltar
+1
+1
+1
+Spain
+Greece
+4
+6
+8
+Albania
+Bulgaria
+Cyprus
+Egypt
+Italy
+Libya
+North Macedonia
+Turkey
+Greenland
+1
+3
+3
+Canada
+Iceland
+Jan Mayen
+Svalbard
+Grenada
+0
+3
+3
+Saint Vincent and the Grenadines
+Trinidad and Tobago
+Venezuela
+Guam
+0
+1
+1
+Federated States of Micronesia
+Northern Mariana Islands
+Guatemala
+4
+4
+4
+Belize
+El Salvador
+Honduras
+Mexico
+Guernsey
+0
+1
+1
+France
+United Kingdom
+Jersey
+Guinea
+6
+2
+6
+Côte d'Ivoire
+Guinea-Bissau
+Liberia
+Mali
+Senegal
+Sierra Leone
+Guinea-Bissau
+2
+2
+2
+Guinea
+Senegal
+Guyana
+3
+4
+5
+Barbados
+Brazil
+Suriname
+Trinidad and Tobago
+Venezuela
+Haiti
+1
+7
+7
+Bahamas
+Colombia
+Cuba
+Dominican Republic
+Turks and Caicos Islands
+Heard Island and McDonald Islands
+0
+1
+1
+French Southern and Antarctic Lands
+Honduras
+3
+8
+8
+Belize
+Cuba
+Guatemala
+Jamaica
+Mexico
+Nicaragua
+Cayman Islands
+Hong Kong
+0
+0
+0
+China
+Macau
+United States
+0
+0
+0
+United States
+Hungary
+7
+0
+7
+Austria
+Croatia
+Romania
+Serbia
+Slovakia
+Slovenia
+Ukraine
+Iceland
+0
+2
+2
+Faroe Islands
+Greenland
+Jan Mayen
+India
+6
+7
+10
+Bangladesh
+Bhutan
+Myanmar
+China
+Indonesia
+Maldives
+Nepal
+Pakistan
+Sri Lanka
+Thailand
+Indonesia
+3
+12
+12
+Australia
+China
+East Timor
+India
+Malaysia
+Palau
+Papua New Guinea
+Philippines
+Singapore
+Taiwan
+Thailand
+Vietnam
+Ashmore and Cartier Islands
+Christmas Island
+Iran
+7
+10
+13
+Afghanistan
+Armenia
+Azerbaijan
+Bahrain
+Iraq
+Kuwait
+Oman
+Pakistan
+Qatar
+Saudi Arabia
+Turkey
+Turkmenistan
+United Arab Emirates
+Iraq
+6
+2
+6
+Iran
+Jordan
+Kuwait
+Saudi Arabia
+Syria
+Turkey
+Ireland
+1
+1
+1
+United Kingdom
+Isle of Man
+0
+0
+0
+United Kingdom
+Israel
+5
+5
+6
+Cyprus
+Egypt
+Jordan
+Lebanon
+Syria
+Palestine
+Italy
+6
+11
+15
+Albania
+Algeria
+Austria
+Croatia
+France
+Greece
+Libya
+Malta
+Montenegro
+San Marino
+Slovenia
+Spain
+Switzerland
+Tunisia
+Vatican City
+Jamaica
+0
+7
+7
+Colombia
+Cuba
+Haiti
+Honduras
+Nicaragua
+Cayman Islands
+Jan Mayen
+0
+2
+2
+Iceland
+Greenland
+Japan
+0
+7
+7
+China
+South Korea
+Russia
+Northern Mariana Islands
+Taiwan
+Jarvis Island
+0
+1
+1
+Kiribati
+Jersey
+0
+1
+1
+France
+Guernsey
+Johnston Atoll
+0
+0
+0
+Jordan
+5
+3
+6
+Egypt
+Iraq
+Israel
+Syria
+Palestine
+Kazakhstan
+5
+3
+6
+Azerbaijan
+China
+Kyrgyzstan
+Russia
+Uzbekistan
+Kenya
+5
+2
+5
+Ethiopia
+Somalia
+South Sudan
+Uganda
+Kingman Reef
+0
+1
+1
+Kiribati
+Palmyra Atoll
+Kiribati
+0
+6
+6
+Marshall Islands
+Nauru
+Tuvalu
+Cook Islands
+French Polynesia
+United States
+Jarvis Island
+Kingman Reef
+Palmyra Atoll
+Tokelau
+North Korea
+3
+3
+3
+China
+South Korea
+South Korea
+1
+3
+3
+China
+Japan
+North Korea
+Kosovo
+4
+0
+4
+Albania
+Montenegro
+North Macedonia
+Serbia
+Kuwait
+2
+3
+3
+Iran
+Iraq
+Saudi Arabia
+Kyrgyzstan
+4
+0
+4
+China
+Kazakhstan
+Tajikistan
+Uzbekistan
+Laos
+5
+0
+5
+Cambodia
+China
+Thailand
+Vietnam
+Latvia
+4
+3
+5
+Estonia
+Lithuania
+Russia
+Lebanon
+2
+3
+3
+Cyprus
+Israel
+Syria
+Lesotho
+1
+0
+1
+South Africa
+Liberia
+3
+2
+3
+Côte d'Ivoire
+Guinea
+Sierra Leone
+Libya
+6
+5
+9
+Algeria
+Chad
+Egypt
+Greece
+Italy
+Malta
+Niger
+Tunisia
+Turkey
+Liechtenstein
+2
+0
+2
+Austria
+Switzerland
+Lithuania
+4
+3
+5
+Latvia
+Poland
+Russia
+Luxembourg
+3
+0
+3
+Belgium
+France
+Germany
+Macau
+0
+0
+0
+China
+Hong Kong
+Madagascar
+0
+5
+5
+Comoros
+France
+Mauritius
+Mozambique
+Seychelles
+French Southern and Antarctic Lands
+Malawi
+3
+0
+3
+Mozambique
+Tanzania
+Zambia
+Malaysia
+3
+8
+8
+China
+Indonesia
+Philippines
+Singapore
+Vietnam
+Taiwan
+Maldives
+0
+4
+4
+India
+Sri Lanka
+British Indian Ocean Territory
+Mauritius
+Mali
+7
+0
+7
+Algeria
+Burkina Faso
+Côte d'Ivoire
+Guinea
+Mauritania
+Niger
+Senegal
+Malta
+0
+2
+2
+Italy
+Libya
+Marshall Islands
+0
+4
+4
+Kiribati
+Federated States of Micronesia
+Nauru
+Wake Island
+Mauritania
+4
+3
+5
+Cape Verde
+Mali
+Senegal
+Mauritius
+0
+4
+4
+France
+Madagascar
+Seychelles
+French Southern and Antarctic Lands
+Maldives
+Mexico
+3
+5
+5
+Cuba
+Guatemala
+Honduras
+United States
+Federated States of Micronesia
+0
+4
+4
+Marshall Islands
+Palau
+Papua New Guinea
+Guam
+Midway Atoll
+0
+0
+0
+United States
+Moldova
+2
+0
+2
+Ukraine
+Monaco
+1
+1
+1
+Mongolia
+2
+0
+2
+Russia
+Montenegro
+5
+3
+6
+Bosnia and Herzegovina
+Croatia
+Italy
+Serbia
+Montserrat
+0
+4
+4
+Antigua and Barbuda
+France
+Saint Kitts and Nevis
+Venezuela
+Morocco
+3
+4
+4
+Portugal
+Spain
+Mozambique
+6
+5
+9
+Eswatininame=Eswatini (Swaziland)
+Madagascar
+Malawi
+Tanzania
+Zambia
+Zimbabwe
+French Southern and Antarctic Lands
+Myanmar
+5
+3
+5
+Bangladesh
+China
+India
+Laos
+Thailand
+Namibia
+4
+2
+4
+Botswana
+Zambia
+Nauru
+0
+2
+2
+Kiribati
+Marshall Islands
+0
+3
+3
+Cuba
+Haiti
+Jamaica
+Nepal
+2
+0
+2
+India
+Netherlands
+2
+7
+7
+Belgium
+Germany
+Saint Kitts and Nevis
+United Kingdom
+Venezuela
+Anguilla
+Curaçao
+Saint Barthélemy
+Saint Martin
+Sint Maarten
+United States Virgin Islands
+Kingdom of the Netherlands
+Aruba
+Curaçao
+Netherlands
+Sint Maarten
+3
+8
+8
+Belgium
+Dominican Republic
+Germany
+Saint Kitts and Nevis
+United Kingdom
+Venezuela
+Anguilla
+France
+France
+United States Virgin Islands
+New Caledonia
+0
+4
+4
+Fiji
+Solomon Islands
+Vanuatu
+Coral Sea Islands
+Norfolk Island
+New Zealand
+0
+2
+2
+Australia
+Fiji
+Norfolk Island
+New Zealand
+Cook Islands
+New Zealand
+Niue
+Tokelau
+0
+7
+7
+Australia
+Fiji
+Kiribati
+Samoa
+Tonga
+American Samoa
+French Polynesia
+Norfolk Island
+Wallis and Futuna
+Nicaragua
+2
+6
+6
+Costa Rica
+El Salvador
+Jamaica
+Panama
+Niger
+7
+0
+7
+Algeria
+Benin
+Burkina Faso
+Chad
+Libya
+Mali
+Nigeria
+Nigeria
+4
+4
+6
+Cameroon
+Chad
+Niger
+São Tomé and Príncipe
+Niue
+0
+2
+2
+Tonga
+American Samoa
+Cook Islands
+Norfolk Island
+0
+2
+2
+New Zealand
+New Caledonia
+North Macedonia
+5
+0
+5
+Albania
+Bulgaria
+Greece
+Serbia
+Kosovo
+Northern Mariana Islands
+0
+1
+1
+Guam
+Norway
+3
+4
+5
+Denmark
+Finland
+Russia
+Sweden
+Svalbard
+Norway
+Bouvet Island
+Jan Mayen
+Norway
+Svalbard
+3
+5
+6
+Denmark
+Finland
+Iceland
+Russia
+Sweden
+Greenland
+Oman
+3
+4
+5
+Iran
+Pakistan
+Saudi Arabia
+United Arab Emirates
+Yemen
+Pakistan
+4
+3
+5
+Afghanistan
+China
+India
+Iran
+Oman
+Palau
+0
+4
+4
+Indonesia
+Philippines
+Palestine
+3
+2
+3
+Egypt
+Jordan
+Palmyra Atoll
+0
+1
+1
+Kiribati
+Kingman Reef
+Panama
+2
+3
+3
+Colombia
+Costa Rica
+Nicaragua
+Papua New Guinea
+1
+4
+4
+Australia
+Indonesia
+Solomon Islands
+Coral Sea Islands
+Paraguay
+3
+0
+3
+Argentina
+Bolivia
+Brazil
+Peru
+5
+2
+5
+Bolivia
+Brazil
+Chile
+Colombia
+Ecuador
+Norway
+0
+1
+1
+Philippines
+0
+8
+8
+Brunei
+China
+Indonesia
+Malaysia
+Palau
+Vietnam
+Taiwan
+Pitcairn Islands
+0
+1
+1
+French Polynesia
+Poland
+7
+4
+9
+Belarus
+Czech Republic
+Denmark
+Germany
+Lithuania
+Russia
+Slovakia
+Sweden
+Ukraine
+Portugal
+1
+2
+2
+Morocco
+Spain
+Puerto Rico
+0
+3
+3
+Dominican Republic
+Venezuela
+British Virgin Islands
+United States Virgin Islands
+Qatar
+1
+4
+4
+Bahrain
+Iran
+Saudi Arabia
+United Arab Emirates
+Norway
+2
+2
+2
+Australia
+Romania
+5
+3
+6
+Bulgaria
+Hungary
+Moldova
+Russia
+Serbia
+Ukraine
+New Zealand
+1
+1
+1
+Australia
+Russia
+14
+16
+20
+Azerbaijan
+Belarus
+Bulgaria
+China
+Estonia
+Finland
+Georgia
+Japan
+Kazakhstan
+North Korea
+Latvia
+Lithuania
+Mongolia
+Norway
+Poland
+Romania
+Sweden
+Turkey
+Ukraine
+United States
+Svalbard
+Rwanda
+4
+0
+4
+Burundi
+Democratic Republic of the Congo
+Tanzania
+Uganda
+Saint Barthélemy
+0
+4
+4
+Antigua and Barbuda
+Netherlands
+Saint Kitts and Nevis
+Anguilla
+France
+Sint Maarten
+Saint Helena, Ascension and Tristan da Cunha
+0
+0
+0
+Saint Kitts and Nevis
+0
+5
+5
+Antigua and Barbuda
+Netherlands
+Venezuela
+Montserrat
+Saint Barthélemy
+Saint Lucia
+0
+4
+4
+Barbados
+France
+Saint Vincent and the Grenadines
+Venezuela
+France
+1
+2
+2
+Netherlands
+Anguilla
+Saint Barthélemy
+Sint Maarten
+Saint Pierre and Miquelon
+0
+1
+1
+Canada
+Saint Vincent and the Grenadines
+0
+5
+5
+Barbados
+Saint Lucia
+Trinidad and Tobago
+Venezuela
+Samoa
+0
+4
+4
+Tonga
+American Samoa
+Wallis and Futuna
+San Marino
+1
+0
+1
+Italy
+São Tomé and Príncipe
+0
+3
+3
+Equatorial Guinea
+Gabon
+Nigeria
+Saudi Arabia
+7
+10
+12
+Bahrain
+Egypt
+Eritrea
+Iran
+Iraq
+Jordan
+Kuwait
+Oman
+Qatar
+Sudan
+United Arab Emirates
+Yemen
+Senegal
+5
+4
+6
+Cape Verde
+The Gambia
+Guinea
+Guinea-Bissau
+Mali
+Mauritania
+Serbia
+8
+0
+8
+Bosnia and Herzegovina
+Bulgaria
+Croatia
+Hungary
+Montenegro
+North Macedonia
+Romania
+Kosovo
+Seychelles
+0
+5
+5
+Comoros
+Madagascar
+Mauritius
+Tanzania
+Sierra Leone
+2
+2
+2
+Guinea
+Liberia
+Singapore
+0
+2
+2
+Indonesia
+Malaysia
+Sint Maarten
+1
+1
+1
+Netherlands
+France
+France
+Slovakia
+5
+0
+5
+Austria
+Czech Republic
+Hungary
+Poland
+Ukraine
+Slovenia
+4
+2
+4
+Austria
+Croatia
+Italy
+Hungary
+Solomon Islands
+0
+5
+5
+Fiji
+Papua New Guinea
+Vanuatu
+Coral Sea Islands
+New Caledonia
+Somalia
+3
+3
+4
+Djibouti
+Ethiopia
+Kenya
+Yemen
+Somaliland
+3
+3
+4
+Djibouti
+Ethiopia
+Somalia
+Yemen
+South Africa
+6
+2
+6
+Botswana
+Eswatininame=Eswatini (Swaziland)
+Lesotho
+Mozambique
+Namibia
+Zimbabwe
+South Georgia and the South Sandwich Islands
+0
+0
+0
+South Ossetia
+2
+0
+2
+Georgia
+Russia
+South Sudan
+6
+0
+6
+Central African Republic
+Democratic Republic of the Congo
+Ethiopia
+Kenya
+Sudan
+Uganda
+Spain
+5
+7
+8
+Algeria
+Andorra
+France
+Italy
+Morocco
+Portugal
+Gibraltar
+Sri Lanka
+0
+2
+2
+India
+Sudan
+7
+3
+8
+Central African Republic
+Chad
+Egypt
+Eritrea
+Ethiopia
+Libya
+Saudi Arabia
+South Sudan
+Suriname
+3
+2
+3
+Brazil
+France
+Guyana
+Svalbard
+0
+2
+2
+Norway
+Russia
+Greenland
+Sweden
+2
+9
+9
+Denmark
+Estonia
+Finland
+Germany
+Latvia
+Lithuania
+Norway
+Poland
+Russia
+Switzerland
+5
+0
+5
+Austria
+France
+Italy
+Liechtenstein
+Germany
+Syria
+5
+4
+7
+Cyprus
+Iraq
+Israel
+Jordan
+Lebanon
+Turkey
+Northern Cyprus
+Republic of China
+0
+7
+7
+Brunei
+China
+Indonesia
+Japan
+Malaysia
+Philippines
+Vietnam
+Tajikistan
+4
+0
+4
+Afghanistan
+China
+Kyrgyzstan
+Uzbekistan
+Tanzania
+8
+4
+10
+Burundi
+Comoros
+Democratic Republic of the Congo
+Kenya
+Malawi
+Mozambique
+Rwanda
+Seychelles
+Uganda
+Zambia
+Thailand
+4
+6
+7
+Myanmar
+Cambodia
+India
+Indonesia
+Laos
+Malaysia
+Vietnam
+Togo
+3
+2
+3
+Benin
+Burkina Faso
+Ghana
+Tokelau
+0
+4
+4
+Kiribati
+Samoa
+American Samoa
+Cook Islands
+Wallis and Futuna
+Tonga
+0
+5
+5
+Fiji
+Samoa
+American Samoa
+Niue
+Wallis and Futuna
+Transnistria
+2
+0
+2
+Moldova
+Ukraine
+Trinidad and Tobago
+0
+5
+5
+Barbados
+Grenada
+Guyana
+Saint Vincent and the Grenadines
+Venezuela
+Tunisia
+2
+3
+3
+Algeria
+Italy
+Libya
+Turkey
+8
+10
+14
+Armenia
+Azerbaijan
+Bulgaria
+Cyprus
+Egypt
+Georgia
+Greece
+Iran
+Iraq
+Russia
+Syria
+Ukraine
+Northern Cyprus
+Turkmenistan
+4
+3
+5
+Afghanistan
+Azerbaijan
+Iran
+Kazakhstan
+Uzbekistan
+Turks and Caicos Islands
+0
+3
+3
+Bahamas
+Dominican Republic
+Haiti
+Tuvalu
+0
+3
+3
+Fiji
+Kiribati
+Wallis and Futuna
+Uganda
+5
+0
+5
+Democratic Republic of the Congo
+Kenya
+Rwanda
+South Sudan
+Tanzania
+Ukraine
+7
+4
+9
+Belarus
+Bulgaria
+Hungary
+Moldova
+Poland
+Romania
+Russia
+Slovakia
+Turkey
+United Arab Emirates
+2
+4
+4
+Iran
+Oman
+Qatar
+Saudi Arabia
+United Kingdom
+1
+7
+7
+Belgium
+Denmark
+France
+Germany
+Ireland
+Netherlands
+Norway
+Spain
+Faroe Islands
+Guernsey
+Isle of Man
+United Kingdom
+United Kingdom
+Anguilla
+Bermuda
+British Indian Ocean Territory
+British Virgin Islands
+Cayman Islands
+Falkland Islands
+Gibraltar
+Guernsey
+Isle of Man
+Jersey
+Montserrat
+Pitcairn Islands
+Saint Helena, Ascension and Tristan da Cunha
+South Georgia and the South Sandwich Islands
+Turks and Caicos Islands
+3
+21
+21
+Antigua and Barbuda
+Argentina
+Bahamas
+Belgium
+Cuba
+Cyprus
+Denmark
+Dominican Republic
+France
+Germany
+Haiti
+Honduras
+Ireland
+Jamaica
+Maldives
+Netherlands
+Norway
+Saint Kitts and Nevis
+Spain
+Venezuela
+Faroe Islands
+French Polynesia
+Puerto Rico
+Saint Barthélemy
+France
+United States Virgin Islands
+United States
+Bahamas
+Canada
+Cuba
+Mexico
+Russia
+Midway Atoll
+United States
+American Samoa
+Baker Island
+Guam
+Howland Island
+Jarvis Island
+Johnston Atoll
+Kingman Reef
+Midway Atoll
+Northern Mariana Islands
+Palmyra Atoll
+Puerto Rico
+United States Virgin Islands
+Wake Island
+2
+18
+18
+Bahamas
+Canada
+Cuba
+Dominican Republic
+Haiti
+Jamaica
+Japan
+Kiribati
+Marshall Islands
+Mexico
+Federated States of Micronesia
+Netherlands
+Russia
+Samoa
+Tonga
+Venezuela
+Anguilla
+British Virgin Islands
+Cook Islands
+Niue
+Tokelau
+United States Virgin Islands
+0
+3
+3
+Netherlands
+Venezuela
+Anguilla
+British Virgin Islands
+Puerto Rico
+Uruguay
+Argentina
+Brazil
+Uzbekistan
+5
+0
+5
+Afghanistan
+Kazakhstan
+Kyrgyzstan
+Tajikistan
+Turkmenistan
+Vanuatu
+0
+3
+3
+Fiji
+Solomon Islands
+New Caledonia
+Vatican City
+1
+0
+1
+Italy
+Venezuela
+3
+14
+15
+Barbados
+Brazil
+Colombia
+Dominica
+Dominican Republic
+France
+Grenada
+Guyana
+Netherlands
+Saint Kitts and Nevis
+Saint Lucia
+Saint Vincent and the Grenadines
+Trinidad and Tobago
+Aruba
+Curaçao
+Montserrat
+Puerto Rico
+United States Virgin Islands
+Vietnam
+3
+8
+9
+Brunei
+Cambodia
+China
+Indonesia
+Laos
+Malaysia
+Philippines
+Taiwan
+Thailand
+Wake Island
+0
+1
+1
+Marshall Islands
+Wallis and Futuna
+0
+5
+5
+Fiji
+Samoa
+Tonga
+Tuvalu
+Tokelau
+3
+3
+4
+Algeria
+Mauritania
+Morocco
+Spain
+Yemen
+2
+5
+5
+Djibouti
+Eritrea
+Oman
+Saudi Arabia
+Somalia
+Zambia
+8
+0
+8
+Angola
+Botswana
+Democratic Republic of the Congo
+Malawi
+Mozambique
+Namibia
+Tanzania
+Zimbabwe
+Zimbabwe
+4
+0
+4
+Botswana
+Mozambique
+South Africa
+Zambia
