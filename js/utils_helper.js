@@ -169,7 +169,7 @@ function getBboxSize(feat) {
 	    area = Math.abs(360 + box[2] - box[0]) * (box[3] - box[1]);  // use turf?
 	} 
 
-	console.log("Box area for " + feat.properties.ISO_A3_EH + " " + area);
+	//console.log("Box area for " + feat.properties.ISO_A3_EH + " " + area);
 	return area;
 }
 
@@ -223,478 +223,255 @@ function getLabelOffsetForSize(s) {
 	return 0.4;
 }
 
-const iso3166_3_neighbors = new Map([
-    ["AFG", ["PAK", "IRN", "TKM", "UZB", "TJK"]],
-	["AGO", ["NAM", "ZAF", "ZMB"]],
-	['ALA', ['FIN']],  // Åland Islands neighbors: Finland
-    ["ALB", ["MNE", "GRC", "MKD", 'SRB']],
-   
-	
-    ["AND", ["ESP", "FRA"]],
-  
-    ["ATG", ["VCT", "GRD", "LCA"]],
-    ["ARG", ["CHL", "BOL", "PAR", "BRA", "URY"]],
-    ["ARM", ["GEO", "AZE", "TUR", "IRN"]],
-    ["AUS", ["NZL"]],
-    ["AUT", ["DEU", "CHE", "SVK", "HUN", "ITA"]],
-    ["AZE", ["RUS", "GEO", "ARM", "IRN"]],
+const wikipediaMap= new Map();
 
-
-	["BGD", ["IND", "MMR"]],
-    ["BGR", ["ROU", "SRB", "MKD", "GRC", "TUR"]],
-	
-    ["BHS", ["USA", "CUB"]],
-    ["BHR", ["SAU"]],
-	['BIH', ['MNE', 'HRV', 'SRB']], // Bosnia and Herzegovina neighbors: Montenegro, Croatia, Serbia
-   
-    ["BLA", []],
-    ["BLR", ["LTU", "LVA", "POL", "UKR", "RUS"]],
-    ["BOL", ["BRA", "PER", "ARG", "PAR"]],
-    ["BIH", ["HRV", "MNE", "SRB"]],
-    ["BRB", ["VCT", "ATG"]],
-    ["BRA", ["VEN", "GUY", "SUR", "URU", "PAR", "BOL"]],
-    ["BRN", ["MYS"]],
-    ["BTN", ["IND", "CHN"]],
-    ["BWA", ["NAM", "ZAF", "ZWE"]],
-    ["CAF", ["TCD", "CMR", "COG", "GAB", "SSD"]],
-    ["CAN", ["USA"]],
-    ["CHE", ["DEU", "AUT", "ITA", "FRA", "LIE"]],
-    ["CHL", ["PER", "ARG"]],
-    ["CHN", ["RUS", "MNG", "KAZ", "KGZ", "TJK", "AFG", "NPL", "IND", "BGD", "MMR", "LAO", "VNM", "KHM", "THA", "BRN"]],
-    ["CIV", ["GHA", "LBY", "MLI", "BFA", "TGO"]],
-    ["CMR", ["NER", "NGA", "TCD", "CAF", "GAB"]],
-    ["COD", ["CAF", "CGO", "GAB", "ANG"]],
-    ["COG", ["GAB", "CAF", "COD"]],
-    ["COL", ["VEN", "BRA", "PER", "PAN"]],
-    ["COM", ["MAY"]],
-    ["CUB", ["USA", "BHS"]],
-    ["CYP", ["TUR", "GRC"]],
-    ["CZE", ["DEU", "AUT", "SVK", "POL"]],
-    ["DEU", ["FRA", "NLD", "BEL", "LUX", "CHE", "AUT", "CZE", "POL", "DNK"]],
-    ["DNK", ["DEU", "SWE"]],
-    ["DOM", ["HTI"]],
-    ["DZA", ["TUN", "LBY", "NER", "MLI", "MRT", "MAR"]],
-	
-    ["ECU", ["COL", "PER"]],
-    ["EGY", ["LBY", "SDN", "ISR", "PSE"]],
-    ["ERI", ["SDN", "ETH", "DJI"]],
-    ["ESH", ["MAR"]],
-    ["ESP", ["AND", "FRA", "PRT"]],
-    ["EST", ["LVA", "RUS"]],
-    ["ETH", ["SDN", "DJI", "KEN", "ERI"]],
-    ["FRA", ["AND", "BEL", "DEU", "ITA", "LUX", "MCO", "NLD", "ESP", "CHE", "GBR"]],
-    ["GAB", ["CMR", "CGO"]],
-    ["GBR", ["IRL"]],
-    ["GEO", ["RUS", "TUR", "ARM", "AZE"]],
-    ["GHA", ["TGO", "BEN", "BFA"]],
-	['GIN', ['SLE', 'LBR']], // Guinea neighbors: Sierra Leone, Liberia
-    ["GMB", ["SEN"]],
-    ["GNB", ["SEN", "MLI"]],
-    ["GNQ", ["CMR", "GAB"]],
-    ["GRC", ["ALB", "MKD", "BGR", "TUR"]],
-	
-    ["GRD", ["VCT", "ATG"]],
-    ["GTM", ["MEX", "BLZ"]],
-    ["GUY", ["VEN", "BRA", "SUR"]],
-	['HKG', ['CHN']],
-    ["HND", ["GTM", "SLV"]],
-    ["HRV", ["SLV", "ITA", "MNE", "BOS",'BIH', 'SRB']],
-	
-    ["HTI", ["DOM"]],
-    ["HUN", ["AUT", "SVK", "ROU", "UKR", "HRV"]],
-    ["IDN", ["MYS", "TLS"]],
-    ["IND", ["PAK", "CHN", "NEP", "BTN", "BGD", "MMR"]],
-    ["IRL", ["GBR"]],
-    ["IRN", ["TUR", "ARM", "AZE", "AFG", "PAK"]],
-    ["IRQ", ["TUR", "IRN", "SYR", "KWT", "SAU"]],
-    ["ISL", ["GBR"]],
-    ["ISR", ["EGY", "JOR", "PSE", "LBY"]],
-    ["ITA", ["FRA", "SVN", "AUT", "CHE"]],
-    ["JAM", ["CUB"]],
-    ["JOR", ["IRQ", "SYR", "ISR", "SAU"]],
-    ["JPN", ["KOR", "RUS"]],
-    ["KAZ", ["RUS", "KYG", "UZB", "TJK", "MNG"]],
-    ["KEN", ["UGA", "TZA", "ETH", "SOM"]],
-    ["KGZ", ["KAZ", "UZB", "TJK"]],
-    ["KHM", ["THA", "LAO", "VNM"]],
-    ["KIR", []],
-    ["KOR", ["PRK"]],
-    ["KWT", ["IRQ", "SAU"]],
-    ["LAO", ["CHN", "VNM", "THA"]],
-    ["LBN", ["SYR", "ISR"]],
-    ["LBR", ["SLE", "GIN"]],
-    ["LBY", ["TUN", "DZA", "NER", "CHD"]],
-    ["LIE", ["CHE", "AUT"]],
-    ["LIT", ["POL", "BLR"]],
-    ["LTU", ["POL", "BLR"]],
-    ["LUX", ["BEL", "DEU", "FRA"]],
-    ["LVA", ["EST", "BLR", "RUS"]],
-    ["MAR", ["DZA", "ESH"]],
-    ["MDA", ["ROU", "UKR"]],
-    ["MDG", ["MUS"]],
-    ["MEX", ["USA", "BLZ"]],
-
-    ['MKD', ['SRB', 'ALB', 'GRC', 'BGR']], // North Macedonia neighbors: Serbia, Albania, Greece, Bulgaria
-  
-    ["MLI", ["DZA", "NER", "BFA", "CIV", "SGS", "GBS"]],
-    ["MLT", []],
-	['MNE', ['HRV', 'BIH', 'SRB', 'ALB', 'XKX']], // Montenegro neighbors: Croatia, Bosnia and Herzegovina, Serbia, Albania, Kosovo
-    ["MNG", ["RUS", "CHN"]],
-    ["MRT", ["DZA", "MLI", "SEN"]],
-    ["MUS", ["MDG"]],
-    ["MWI", ["TZA", "MOZ"]],
-    ["MYS", ["THA", "SGP", "IDN", "BRN"]],
-    ["NAM", ["AGO", "ZAF", "BWA", "ZMB"]],
-    ["NCL", ["AUS"]],
-    ["NER", ["DZA", "MLI", "BFA", "NGA"]],
-    ["NGA", ["BEN", "TGO", "GHA", "CMR", "NER"]],
-    ["NIC", ["HND", "CRI"]],
-    ["NLD", ["BEL", "DEU"]],
-    ["NOR", ["SWE", "FIN"]],
-    ["NZL", ["AUS"]],
-    ["OMN", ["SAU", "ARE"]],
-    ["PAK", ["IND", "AFG", "IRN"]],
-    ["PAN", ["COL", "CRI"]],
-    ["PER", ["ECU", "COL", "BRA", "BOL", "CHL"]],
-    ["PHL", []],
-    ["PNG", ["AUS", "SLB"]],
-    ["POL", ["DEU", "CZE", "SVK", "LVA", "LTU", "BLR"]],
-    ["PRK", ["KOR", "CHN", "RUS"]],
-    ["PRT", ["ESP"]],
-    ["PSE", ["ISR", "EGY", "JOR"]],
-    ["QAT", ["SAU"]],
-	['ROM', ['SRB', 'BGR']] ,
-    ["ROU", ["HUN", "MDA", "UKR", "BGR"]],
-    ["RUS", ["NOR", "FIN", "EST", "LVA", "LTU", "BLR", "UKR", "KAZ", "MNG", "PRK", "JPN"]],
-    ["RWA", ["UGA", "TZA", "BDI"]],
-    ["SEN", ["GMB", "MRT", "GHA"]],
-    ["SGP", ["MYS"]],
-    ["SLE", ["GIN", "LBR"]],
-    ["SLB", ["PNG", "AUS"]],
-    ["SMR", ["ITA"]],
-    ["SOM", ["KEN", "ETH"]],
-    ["SRB", ["HUN", "ROU", "BGR", "MKD", "HRV", "BOS",'MNE',, 'BIH', 'ALB', 'XKX']],
-	
-    ["SSD", ["ETH", "KEN", "UGA", "CDG"]],
-    ["STP", []],
-    ["SWE", ["NOR", "DNK"]],
-    ["SWZ", ["ZAF", "MOZ"]],
-    ["SYR", ["TUR", "IRQ", "JOR", "ISR"]],
-	['TCD', ['LBY', 'SDN', 'CAF', 'CMR', 'NGA',"NER"]], // Chad neighbors: Libya, Sudan, Central African Republic, Cameroon, Nigeria
-
-    ["TGO", ["BEN", "GHA"]],
-    ["THA", ["MYS", "LAO", "KHM", "MYN"]],
-    ["TJK", ["KAZ", "KGZ", "UZB", "AFG"]],
-    ["TKM", ["KAZ", "UZB", "AFG"]],
-    ["TLS", ["IDN"]],
-    ["TUN", ["ALG", "LIB"]],
-    ["TZA", ["KEN", "UGA", "MWI", "MOZ", "COM"]],
-    ["UGA", ["KEN", "TZA", "RWA"]],
-    ["UKR", ["POL", "SVK", "HU", "ROU", "MD", "BY", "RUS"]],
-    ["URY", ["BRA", "ARG"]],
-    ["USA", ["CAN", "MEX"]],
-    ["UZB", ["KAZ", "KYG", "TJK", "AFG"]],
-    ["VEN", ["COL", "BRA", "GUY"]],
-    ["VNM", ["CHN", "LAO", "KHM"]],
-    ["VUT", ["NZL"]],
-    ["WLF", []],
-    ["WSM", []],
-    ["YEM", ["SAU", "OMN"]],
-    ["ZAF", ["NAM", "BWA", "ZWE", "MOZ"]],
-    ["ZMB", ["TZA", "NAM", "ZWE"]],
-    ["ZWE", ["ZAF", "BWA", "ZMB"]],
-    ["LCA", ["VCT", "ATG"]],
-    ["VCT", ["GRD", "ATG", "LCA"]],
-    ["XKK", ["ALB", "MNE", "SRB"]], // Kosovo
-    ["PSE", ["ISR", "EGY", "JOR"]], // Palestine
-    // Add Caribbean and additional countries...
-]);
-
-const balkanNeighbors = new Map([
-	['MNE', ['HRV', 'BIH', 'SRB', 'ALB', 'XKX']], // Montenegro neighbors: Croatia, Bosnia and Herzegovina, Serbia, Albania, Kosovo
-	['HRV', ['MNE', 'BIH', 'SRB']], // Croatia neighbors: Montenegro, Bosnia and Herzegovina, Serbia
-	
-
-	['ALB', ['MNE', 'SRB']], // Albania neighbors: Montenegro, Serbia
-	['XKX', ['MNE', 'SRB']], // Kosovo neighbors: Montenegro, Serbia
-	['MKD', ['SRB', 'ALB', 'GRC', 'BGR']], // North Macedonia neighbors: Serbia, Albania, Greece, Bulgaria
-	['GRC', ['MKD', 'BGR', 'ALB']], // Greece neighbors: North Macedonia, Bulgaria, Albania
-	['BGR', ['MKD', 'GRC', 'SRB']], // Bulgaria neighbors: North Macedonia, Greece, Serbia
-	['ROM', ['SRB', 'BGR']] // Romania neighbors: Serbia, Bulgaria
-	// More Balkan countries can be added here as needed
-  ]);
-
-// Add the Caribbean countries
-iso3166_3_neighbors.set("ATG", ["VCT", "GRD", "JAM", "DOM"]);
-iso3166_3_neighbors.set("BHS", ["USA", "CUB"]);
-iso3166_3_neighbors.set("BRB", ["VCT", "ATG", "GRD"]);
-iso3166_3_neighbors.set("CUB", ["USA", "BHS"]);
-iso3166_3_neighbors.set("DMA", ["ATG", "VCT"]);
-iso3166_3_neighbors.set("DOM", ["HTI", "ATG"]);
-iso3166_3_neighbors.set("GRD", ["ATG", "VCT"]);
-iso3166_3_neighbors.set("HTI", ["DOM", "BHS"]);
-iso3166_3_neighbors.set("JAM", ["CUB"]);
-iso3166_3_neighbors.set("LCA", ["VCT", "ATG"]);
-iso3166_3_neighbors.set("MUS", ["MDG", "REU"]);
-iso3166_3_neighbors.set("STP", []); // São Tomé and Príncipe
-iso3166_3_neighbors.set("TTO", ["VEN"]);
-iso3166_3_neighbors.set("VCT", ["ATG", "GRD", "LCA"]);
-
-iso3166_3_neighbors.set(["PHL", ["VNM", "TWN", "MYS"]]);
-
-console.log(iso3166_3_neighbors.size); // Should still return 237, but really 165
-
-const wikipediaMap =  new Map();
-
-wikipediaMap.set("ATF", ["AUS"]);
+wikipediaMap.set("ABW", ["CUW","DOM","VEN"]);
 wikipediaMap.set("AFG", ["CHN","IRN","PAK","TJK","TKM","UZB"]);
-wikipediaMap.set("GBR", ["CYP","UN"]);
-wikipediaMap.set("ALB", ["GRC","ITA","MNE","MKD","XKX"]);
-wikipediaMap.set("DZA", ["ITA","LBY","MLI","MRT","MAR","NER","ESP","TUN"]);
-wikipediaMap.set("ASM", ["WSM","TON","COK","NIU","TKL"]);
-wikipediaMap.set("AND", ["FRA","ESP"]);
 wikipediaMap.set("AGO", ["COD","COG","NAM","ZMB"]);
 wikipediaMap.set("AIA", ["ATG","VGB","NLD","BLM","FRA","VIR"]);
-wikipediaMap.set("ATG", ["FRA","KNA","AIA","MSR","FRA"]);
+wikipediaMap.set("ALB", ["GRC","ITA","MNE","MKD","XKX"]);
+wikipediaMap.set("AND", ["FRA","ESP"]);
+wikipediaMap.set("ARE", ["IRN","OMN","QAT","SAU"]);
 wikipediaMap.set("ARG", ["BOL","BRA","CHL","PRY","URY","FLK"]);
 wikipediaMap.set("ARM", ["AZE","GEO","IRN","TUR"]);
-wikipediaMap.set("ABW", ["CUW","DOM","VEN"]);
-wikipediaMap.set("NFK", ["TLS","IDN","NZL","PNG","SLB","ATF","NCL"]);
-wikipediaMap.set("AUS", ["TLS","IDN","NZL","PNG"]);
-wikipediaMap.set("AUS", ["ATF","NOR","NZL"]);
+wikipediaMap.set("ASM", ["WSM","TON","COK","NIU","TKL"]);
+wikipediaMap.set("ATF", ["AUS"]);
+//wikipediaMap.set("ATF", ["COM","FRA","MDG","MUS","SYC","HMD"]);
+wikipediaMap.set("ATG", ["FRA","KNA","AIA","MSR","FRA"]);
+wikipediaMap.set("AUS", ["TLS","IDN","NZL","PNG","SLB","ATF","NCL"]);
 wikipediaMap.set("AUT", ["CZE","DEU","HUN","ITA","LIE","SVK","SVN","CHE"]);
 wikipediaMap.set("AZE", ["ARM","GEO","IRN","KAZ","RUS","TUR","TKM"]);
-wikipediaMap.set("BHS", ["CUB","HTI","USA","TCA"]);
-wikipediaMap.set("BHR", ["IRN","QAT","SAU"]);
-wikipediaMap.set("USA", ["USA","KIR"]);
-wikipediaMap.set("BGD", ["MMR","IND"]);
-wikipediaMap.set("BRB", ["FRA","GUY","LCA","VCT","TTO","VEN"]);
-wikipediaMap.set("BLR", ["LVA","LTU","POL","RUS","UKR"]);
-wikipediaMap.set("BEL", ["FRA","DEU","LUX","NLD","GBR"]);
-wikipediaMap.set("BLZ", ["GTM","HND","MEX"]);
-wikipediaMap.set("BEN", ["BFA","NER","NGA","TGO"]);
-wikipediaMap.set("BMU", []);
-wikipediaMap.set("BTN", ["CHN","IND"]);
-wikipediaMap.set("BOL", ["ARG","BRA","CHL","PRY","PER"]);
-wikipediaMap.set("BIH", ["HRV","MNE","SRB"]);
-wikipediaMap.set("BWA", ["NAM","ZAF","ZMB","ZWE"]);
-wikipediaMap.set("BRA", ["ARG","BOL","COL","FRA","GUY","PRY","PER","SUR","URY","VEN"]);
-wikipediaMap.set("IOT", ["MDV"]);
-wikipediaMap.set("VGB", ["AIA","PRI","VIR"]);
-wikipediaMap.set("BRN", ["CHN","MYS","PHL","TWN","VNM"]);
-wikipediaMap.set("BGR", ["GRC","MKD","ROU","SRB","TUR","RUS","UKR"]);
-wikipediaMap.set("BFA", ["BEN","CIV","GHA","MLI","NER","TGO"]);
 wikipediaMap.set("BDI", ["COD","RWA","TZA"]);
-wikipediaMap.set("KHM", ["LAO","THA","VNM"]);
-wikipediaMap.set("CMR", ["CAF","TCD","COG","GNQ","GAB","NGA"]);
-wikipediaMap.set("CAN", ["USA","GRL","SPM"]);
-wikipediaMap.set("CPV", ["GMB","MRT","SEN"]);
-wikipediaMap.set("CYM", ["CUB","HND","JAM"]);
+wikipediaMap.set("BEL", ["FRA","DEU","LUX","NLD","GBR"]);
+wikipediaMap.set("BEN", ["BFA","NER","NGA","TGO"]);
+wikipediaMap.set("BFA", ["BEN","CIV","GHA","MLI","NER","TGO"]);
+wikipediaMap.set("BGD", ["MMR","IND"]);
+wikipediaMap.set("BGR", ["GRC","MKD","ROU","SRB","TUR","RUS","UKR"]);
+wikipediaMap.set("BHR", ["IRN","QAT","SAU"]);
+wikipediaMap.set("BHS", ["CUB","HTI","USA","TCA"]);
+wikipediaMap.set("BIH", ["HRV","MNE","SRB"]);
+wikipediaMap.set("BLM", ["ATG","NLD","KNA","AIA","FRA","SXM"]);
+wikipediaMap.set("BLR", ["LVA","LTU","POL","RUS","UKR"]);
+wikipediaMap.set("BLZ", ["GTM","HND","MEX"]);
+wikipediaMap.set("BMU", []);
+wikipediaMap.set("BOL", ["ARG","BRA","CHL","PRY","PER"]);
+wikipediaMap.set("BRA", ["ARG","BOL","COL","FRA","GUY","PRY","PER","SUR","URY","VEN"]);
+wikipediaMap.set("BRB", ["FRA","GUY","LCA","VCT","TTO","VEN"]);
+wikipediaMap.set("BRN", ["CHN","MYS","PHL","TWN","VNM"]);
+wikipediaMap.set("BTN", ["CHN","IND"]);
+wikipediaMap.set("BWA", ["NAM","ZAF","ZMB","ZWE"]);
 wikipediaMap.set("CAF", ["CMR","TCD","COD","COG","SSD","SDN"]);
-wikipediaMap.set("TCD", ["CMR","CAF","LBY","NER","NGA","SDN"]);
+wikipediaMap.set("CAN", ["USA","GRL","SPM"]);
+wikipediaMap.set("CHE", ["AUT","FRA","ITA","LIE","DEU"]);
 wikipediaMap.set("CHL", ["ARG","BOL","PER"]);
-wikipediaMap.set("TWN", ["AFG","BTN","BRN","IND","IDN","JPN","KAZ","PRK","KOR","KGZ","LAO","MYS","MNG","MMR","NPL","PAK","PHL","RUS","TJK","VNM","HKG","MAC","TWN"]);
-wikipediaMap.set("COL", ["BRA","CRI","DOM","ECU","HTI","JAM","NIC","PAN","PER","VEN"]);
-wikipediaMap.set("COM", ["FRA","MDG","MOZ","SYC","TZA","ATF"]);
+wikipediaMap.set("CHN", ["AFG","BTN","BRN","IND","IDN","JPN","KAZ","PRK","KOR","KGZ","LAO","MYS","MNG","MMR","NPL","PAK","PHL","RUS","TJK","VNM","HKG","MAC","TWN"]);
+wikipediaMap.set("CIV", ["BFA","GHA","GIN","LBR","MLI"]);
+wikipediaMap.set("CMR", ["CAF","TCD","COG","GNQ","GAB","NGA"]);
 wikipediaMap.set("COD", ["AGO","BDI","CAF","COG","RWA","SSD","TZA","UGA","ZMB"]);
 wikipediaMap.set("COG", ["AGO","CMR","CAF","COD","GAB"]);
 wikipediaMap.set("COK", ["KIR","ASM","PYF","NIU","TKL"]);
+wikipediaMap.set("COL", ["BRA","CRI","DOM","ECU","HTI","JAM","NIC","PAN","PER","VEN"]);
+wikipediaMap.set("COM", ["FRA","MDG","MOZ","SYC","TZA","ATF"]);
+wikipediaMap.set("CPV", ["GMB","MRT","SEN"]);
 wikipediaMap.set("CRI", ["COL","ECU","NIC","PAN"]);
-wikipediaMap.set("CIV", ["BFA","GHA","GIN","LBR","MLI"]);
-wikipediaMap.set("HRV", ["BIH","HUN","ITA","MNE","SRB","SVN"]);
 wikipediaMap.set("CUB", ["BHS","HTI","HND","JAM","MEX","USA","CYM"]);
 wikipediaMap.set("CUW", ["DOM","NLD","VEN","ABW"]);
-wikipediaMap.set("CYP", ["EGY","GRC","ISR","LBN","SYR","TUR","GBR","UN"]);
+wikipediaMap.set("CYM", ["CUB","HND","JAM"]);
+wikipediaMap.set("CYP", ["EGY","GRC","PSE","ISR","LBN","SYR","TUR","GBR","UN"]);
 wikipediaMap.set("CZE", ["AUT","DEU","POL","SVK"]);
-wikipediaMap.set("DNK", ["DEU","NOR","POL","SWE","GBR","DNK","DNK","FRO"]);
-wikipediaMap.set("GRL", ["CAN","DEU","ISL","NOR","POL","SWE","GBR","SJM","SJM"]);
+wikipediaMap.set("DEU", ["AUT","BEL","CZE","DNK","FRA","LUX","NLD","POL","SWE","CHE","GBR"]);
 wikipediaMap.set("DJI", ["ERI","ETH","SOM","YEM"]);
 wikipediaMap.set("DMA", ["FRA","VEN"]);
+wikipediaMap.set("DNK", ["DEU","NOR","POL","SWE","GBR"]);
 wikipediaMap.set("DOM", ["COL","HTI","VEN","ABW","CUW","PRI","TCA"]);
-wikipediaMap.set("TLS", ["AUS","IDN"]);
+wikipediaMap.set("DZA", ["ITA","LBY","MLI","MRT","MAR","ESH","NER","ESP","TUN"]);
 wikipediaMap.set("ECU", ["COL","CRI","PER"]);
 wikipediaMap.set("EGY", ["CYP","GRC","ISR","JOR","LBY","SAU","SDN","TUR","PSE"]);
-wikipediaMap.set("SLV", ["GTM","HND","NIC"]);
-wikipediaMap.set("GNQ", ["CMR","GAB","NGA","STP"]);
 wikipediaMap.set("ERI", ["DJI","SAU","SDN","ETH","YEM"]);
+wikipediaMap.set("ESP", ["DZA","AND","FRA","ITA","MAR","PRT"]);
 wikipediaMap.set("EST", ["FIN","LVA","RUS","SWE"]);
-wikipediaMap.set("SWZ", ["MOZ","ZAF"]);
+
+wikipediaMap.set("ESH", ["DZA","MAR","MRT"]);
+
 wikipediaMap.set("ETH", ["DJI","ERI","KEN","SOM","SSD","SDN"]);
-wikipediaMap.set("FLK", ["ARG"]);
-wikipediaMap.set("FRO", ["ISL","NOR","GBR"]);
-wikipediaMap.set("FJI", ["NZL","SLB","TON","TUV","VUT","NCL","WLF"]);
 wikipediaMap.set("FIN", ["EST","NOR","RUS","SWE"]);
-wikipediaMap.set("FRA", ["AND","ATG","BRB","BEL","BRA","COM","DMA","DEU","ITA","LUX","MDG","MUS","LCA","ESP","CHE","SUR","GBR","VEN","ATF","GGY","JEY","MSR","FRA","PYF","ATF","NCL","BLM","FRA","SPM"]);
-wikipediaMap.set("WLF", ["AND","ATG","BRB","BEL","BRA","CAN","COM","DMA","FJI","DEU","ITA","KIR","LUX","MDG","MUS","MOZ","NLD","KNA","LCA","SYC","SLB","ESP","SUR","CHE","TON","TUV","GBR","VUT","VEN","AIA","COK","GGY","AUS","JEY","MSR","SXM","NFK","PCN","TKL"]);
-wikipediaMap.set("PYF", ["KIR","COK","PCN"]);
-wikipediaMap.set("ATF", ["COM","FRA","MDG","MUS","SYC","HMD"]);
+wikipediaMap.set("FJI", ["NZL","SLB","TON","TUV","VUT","NCL","WLF"]);
+wikipediaMap.set("FLK", ["ARG"]);
+wikipediaMap.set("FRA", ["AND","ATG","BRB","BEL","BRA","COM","DMA","DEU","ITA","LUX","MDG","MUS","LCA","ESP","CHE","SUR","GBR","VEN","ATF","GGY","JEY","MSR"]);
+wikipediaMap.set("FRO", ["ISL","NOR","GBR"]);
+wikipediaMap.set("FSM", ["MHL","PLW","PNG","GUM"]);
 wikipediaMap.set("GAB", ["CMR","COG","GNQ","STP"]);
-wikipediaMap.set("GMB", ["CPV","SEN"]);
+wikipediaMap.set("GBR", ["BEL","DNK","FRA","DEU","IRL","NLD","NOR","ESP","FRO","GGY","IMN"]);
 wikipediaMap.set("GEO", ["ARM","AZE","RUS","TUR"]);
-wikipediaMap.set("DEU", ["AUT","BEL","CZE","DNK","FRA","LUX","NLD","POL","SWE","CHE","GBR"]);
-wikipediaMap.set("GHA", ["BFA","CIV","TGO"]);
-wikipediaMap.set("GRC", ["ALB","BGR","CYP","EGY","ITA","LBY","MKD","TUR"]);
-wikipediaMap.set("GRL", ["CAN","ISL","SJM","SJM"]);
-wikipediaMap.set("GRD", ["VCT","TTO","VEN"]);
-wikipediaMap.set("GUM", ["FSM","MNP"]);
-wikipediaMap.set("GTM", ["BLZ","SLV","HND","MEX"]);
 wikipediaMap.set("GGY", ["FRA","GBR","JEY"]);
+wikipediaMap.set("GHA", ["BFA","CIV","TGO"]);
 wikipediaMap.set("GIN", ["CIV","GNB","LBR","MLI","SEN","SLE"]);
+wikipediaMap.set("GMB", ["CPV","SEN"]);
 wikipediaMap.set("GNB", ["GIN","SEN"]);
+wikipediaMap.set("GNQ", ["CMR","GAB","NGA","STP"]);
+wikipediaMap.set("GRC", ["ALB","BGR","CYP","EGY","ITA","LBY","MKD","TUR"]);
+wikipediaMap.set("GRD", ["VCT","TTO","VEN"]);
+wikipediaMap.set("GRL", ["CAN","ISL","SJM","SJM"]);
+wikipediaMap.set("GTM", ["BLZ","SLV","HND","MEX"]);
+wikipediaMap.set("GUM", ["FSM","MNP"]);
 wikipediaMap.set("GUY", ["BRB","BRA","SUR","TTO","VEN"]);
-wikipediaMap.set("HTI", ["BHS","COL","CUB","DOM","TCA"]);
+wikipediaMap.set("HKG", ["CHN","MAC"]);
 wikipediaMap.set("HMD", ["ATF"]);
 wikipediaMap.set("HND", ["BLZ","CUB","GTM","JAM","MEX","NIC","CYM"]);
-wikipediaMap.set("HKG", ["CHN","MAC"]);
-wikipediaMap.set("USA", ["USA"]);
+wikipediaMap.set("HRV", ["BIH","HUN","ITA","MNE","SRB","SVN"]);
+wikipediaMap.set("HTI", ["BHS","COL","CUB","DOM","TCA"]);
 wikipediaMap.set("HUN", ["AUT","HRV","ROU","SRB","SVK","SVN","UKR"]);
-wikipediaMap.set("ISL", ["FRO","GRL","SJM"]);
-wikipediaMap.set("IND", ["BGD","BTN","MMR","CHN","IDN","MDV","NPL","PAK","LKA","THA"]);
 wikipediaMap.set("IDN", ["AUS","CHN","TLS","IND","MYS","PLW","PNG","PHL","SGP","TWN","THA","VNM"]);
+wikipediaMap.set("IMN", ["GBR"]);
+wikipediaMap.set("IND", ["BGD","BTN","MMR","CHN","IDN","MDV","NPL","PAK","LKA","THA"]);
+wikipediaMap.set("IOT", ["MDV"]);
+wikipediaMap.set("IRL", ["GBR"]);
 wikipediaMap.set("IRN", ["AFG","ARM","AZE","BHR","IRQ","KWT","OMN","PAK","QAT","SAU","TUR","TKM","ARE"]);
 wikipediaMap.set("IRQ", ["IRN","JOR","KWT","SAU","SYR","TUR"]);
-wikipediaMap.set("IRL", ["GBR"]);
-wikipediaMap.set("IMN", ["GBR"]);
+wikipediaMap.set("ISL", ["FRO","GRL","SJM"]);
 wikipediaMap.set("ISR", ["CYP","EGY","JOR","LBN","SYR","PSE"]);
 wikipediaMap.set("ITA", ["ALB","DZA","AUT","HRV","FRA","GRC","LBY","MLT","MNE","SMR","SVN","ESP","CHE","TUN","VAT"]);
 wikipediaMap.set("JAM", ["COL","CUB","HTI","HND","NIC","CYM"]);
-wikipediaMap.set("SJM", ["ISL","GRL"]);
-wikipediaMap.set("JPN", ["CHN","KOR","RUS","MNP","TWN"]);
 wikipediaMap.set("JEY", ["FRA","GGY"]);
-wikipediaMap.set("JOR", ["EGY","IRQ","ISR","SYR","PSE"]);
+wikipediaMap.set("JOR", ["EGY","IRQ","ISR","SYR","PSE","SAU"]);
+wikipediaMap.set("JPN", ["CHN","KOR","RUS","MNP","TWN"]);
 wikipediaMap.set("KAZ", ["AZE","CHN","KGZ","RUS","UZB"]);
 wikipediaMap.set("KEN", ["ETH","SOM","SSD","UGA"]);
-wikipediaMap.set("KIR", ["MHL","NRU","TUV","COK","PYF","USA","TKL"]);
-wikipediaMap.set("PRK", ["CHN","KOR"]);
-wikipediaMap.set("KOR", ["CHN","JPN","PRK"]);
-wikipediaMap.set("XKX", ["ALB","MNE","MKD","SRB"]);
-wikipediaMap.set("KWT", ["IRN","IRQ","SAU"]);
 wikipediaMap.set("KGZ", ["CHN","KAZ","TJK","UZB"]);
+wikipediaMap.set("KHM", ["LAO","THA","VNM"]);
+wikipediaMap.set("KIR", ["MHL","NRU","TUV","COK","PYF","USA","TKL"]);
+wikipediaMap.set("KNA", ["ATG","NLD","VEN","MSR","BLM"]);
+wikipediaMap.set("KOR", ["CHN","JPN","PRK"]);
+wikipediaMap.set("KWT", ["IRN","IRQ","SAU"]);
 wikipediaMap.set("LAO", ["KHM","CHN","THA","VNM"]);
-wikipediaMap.set("LVA", ["EST","LTU","RUS"]);
 wikipediaMap.set("LBN", ["CYP","ISR","SYR"]);
-wikipediaMap.set("LSO", ["ZAF"]);
 wikipediaMap.set("LBR", ["CIV","GIN","SLE"]);
-wikipediaMap.set("LBY", ["DZA","TCD","EGY","GRC","ITA","MLT","NER","TUN","TUR"]);
+wikipediaMap.set("LBY", ["DZA","TCD","EGY","GRC","ITA","MLT","NER","SDN","TUN","TUR"]);
+wikipediaMap.set("LCA", ["BRB","FRA","VCT","VEN"]);
 wikipediaMap.set("LIE", ["AUT","CHE"]);
+wikipediaMap.set("LKA", ["IND"]);
+wikipediaMap.set("LSO", ["ZAF"]);
 wikipediaMap.set("LTU", ["LVA","POL","RUS"]);
 wikipediaMap.set("LUX", ["BEL","FRA","DEU"]);
+wikipediaMap.set("LVA", ["EST","LTU","RUS"]);
 wikipediaMap.set("MAC", ["CHN","HKG"]);
+wikipediaMap.set("MAR", ["PRT","ESP","ESH","DZA"]);
+wikipediaMap.set("MCO", []);
+wikipediaMap.set("MDA", ["UKR"]);
 wikipediaMap.set("MDG", ["COM","FRA","MUS","MOZ","SYC","ATF"]);
-wikipediaMap.set("MWI", ["MOZ","TZA","ZMB"]);
-wikipediaMap.set("MYS", ["CHN","IDN","PHL","SGP","VNM","TWN"]);
 wikipediaMap.set("MDV", ["IND","LKA","IOT","MUS"]);
+wikipediaMap.set("MEX", ["CUB","GTM","HND","USA"]);
+wikipediaMap.set("MHL", ["CUB","HTI","JAM"]);
+wikipediaMap.set("MHL", ["KIR","FSM","NRU"]);
+wikipediaMap.set("MKD", ["ALB","BGR","GRC","SRB","XKX"]);
 wikipediaMap.set("MLI", ["DZA","BFA","CIV","GIN","MRT","NER","SEN"]);
 wikipediaMap.set("MLT", ["ITA","LBY"]);
-wikipediaMap.set("MHL", ["KIR","FSM","NRU"]);
-wikipediaMap.set("MRT", ["CPV","MLI","SEN"]);
-wikipediaMap.set("MUS", ["FRA","MDG","SYC","ATF","MDV"]);
-wikipediaMap.set("MEX", ["CUB","GTM","HND","USA"]);
-wikipediaMap.set("FSM", ["MHL","PLW","PNG","GUM"]);
-wikipediaMap.set("MDA", ["UKR"]);
-wikipediaMap.set("MCO", []);
-wikipediaMap.set("MNG", ["RUS"]);
-wikipediaMap.set("MNE", ["BIH","HRV","ITA","SRB"]);
-wikipediaMap.set("MSR", ["ATG","FRA","KNA","VEN"]);
-wikipediaMap.set("MAR", ["PRT","ESP"]);
-wikipediaMap.set("MOZ", ["SWZ","MDG","MWI","TZA","ZMB","ZWE","ATF"]);
 wikipediaMap.set("MMR", ["BGD","CHN","IND","LAO","THA"]);
-wikipediaMap.set("NAM", ["BWA","ZMB"]);
-wikipediaMap.set("NRU", ["KIR"]);
-wikipediaMap.set("MHL", ["CUB","HTI","JAM"]);
-wikipediaMap.set("NPL", ["IND"]);
-wikipediaMap.set("NLD", ["BEL","DEU","KNA","GBR","VEN","AIA","CUW","BLM","MAF","SXM","VIR","ABW","CUW","NLD"]);
-wikipediaMap.set("SXM", ["BEL","DOM","DEU","KNA","GBR","VEN","AIA","FRA","FRA","VIR"]);
-wikipediaMap.set("NCL", ["FJI","SLB","VUT","NFK"]);
-wikipediaMap.set("NZL", ["AUS","FJI","NFK","NZL","COK","NZL","NIU"]);
-wikipediaMap.set("TKL", ["AUS","FJI","KIR","WSM","TON","ASM","PYF","NFK","WLF"]);
-wikipediaMap.set("NIC", ["CRI","SLV","JAM","PAN"]);
-wikipediaMap.set("NER", ["DZA","BEN","BFA","TCD","LBY","MLI","NGA"]);
-wikipediaMap.set("NGA", ["CMR","TCD","NER","STP"]);
-wikipediaMap.set("NIU", ["TON","ASM","COK"]);
-wikipediaMap.set("NFK", ["NZL","NCL"]);
-wikipediaMap.set("MKD", ["ALB","BGR","GRC","SRB","XKX"]);
+wikipediaMap.set("MNE", ["BIH","HRV","ITA","SRB"]);
+wikipediaMap.set("MNG", ["RUS"]);
 wikipediaMap.set("MNP", ["GUM"]);
+wikipediaMap.set("MOZ", ["SWZ","MDG","MWI","TZA","ZMB","ZWE","ATF"]);
+wikipediaMap.set("MRT", ["CPV","MLI","SEN",,"ESH","DZA"]);
+wikipediaMap.set("MSR", ["ATG","FRA","KNA","VEN"]);
+wikipediaMap.set("MUS", ["FRA","MDG","SYC","ATF","MDV"]);
+wikipediaMap.set("MWI", ["MOZ","TZA","ZMB"]);
+wikipediaMap.set("MYS", ["CHN","IDN","PHL","SGP","VNM","TWN"]);
+wikipediaMap.set("NAM", ["BWA","ZMB"]);
+wikipediaMap.set("NCL", ["FJI","SLB","VUT","NFK"]);
+wikipediaMap.set("NER", ["DZA","BEN","BFA","TCD","LBY","MLI","NGA"]);
+wikipediaMap.set("NFK", ["NZL","NCL"]);
+wikipediaMap.set("NGA", ["CMR","TCD","NER","STP"]);
+wikipediaMap.set("NIC", ["CRI","SLV","JAM","PAN","HND"]);
+wikipediaMap.set("NIU", ["TON","ASM","COK"]);
+wikipediaMap.set("NLD", ["BEL","DEU","KNA","GBR","VEN","AIA","CUW","BLM","MAF","SXM","VIR","ABW","CUW","NLD"]);
+wikipediaMap.set("NOR", []);
+wikipediaMap.set("NOR", ["AUS"]);
 wikipediaMap.set("NOR", ["DNK","FIN","RUS","SWE","SJM","NOR","SJM","NOR"]);
-wikipediaMap.set("SJM", ["DNK","FIN","ISL","RUS","SWE","GRL"]);
+wikipediaMap.set("NPL", ["IND","CHN"]);
+wikipediaMap.set("NRU", ["KIR"]);
+wikipediaMap.set("NZL", ["AUS"]);
+wikipediaMap.set("NZL", ["AUS","FJI","NFK","NZL","COK","NZL","NIU"]);
 wikipediaMap.set("OMN", ["IRN","PAK","SAU","ARE","YEM"]);
 wikipediaMap.set("PAK", ["AFG","CHN","IND","IRN","OMN"]);
-wikipediaMap.set("PLW", ["IDN","PHL"]);
-wikipediaMap.set("PSE", ["EGY","JOR"]);
 wikipediaMap.set("PAN", ["COL","CRI","NIC"]);
-wikipediaMap.set("PNG", ["AUS","IDN","SLB"]);
-wikipediaMap.set("PRY", ["ARG","BOL","BRA"]);
-wikipediaMap.set("PER", ["BOL","BRA","CHL","COL","ECU"]);
-wikipediaMap.set("NOR", []);
-wikipediaMap.set("PHL", ["BRN","CHN","IDN","MYS","PLW","VNM","TWN"]);
 wikipediaMap.set("PCN", ["PYF"]);
+wikipediaMap.set("PER", ["BOL","BRA","CHL","COL","ECU"]);
+wikipediaMap.set("PHL", ["BRN","CHN","IDN","MYS","PLW","VNM","TWN"]);
+wikipediaMap.set("PLW", ["IDN","PHL"]);
+wikipediaMap.set("PNG", ["AUS","IDN","SLB"]);
 wikipediaMap.set("POL", ["BLR","CZE","DNK","DEU","LTU","RUS","SVK","SWE","UKR"]);
-wikipediaMap.set("PRT", ["MAR","ESP"]);
 wikipediaMap.set("PRI", ["DOM","VEN","VGB","VIR"]);
+wikipediaMap.set("PRK", ["CHN","KOR"]);
+wikipediaMap.set("PRT", ["MAR","ESP"]);
+wikipediaMap.set("PRY", ["ARG","BOL","BRA"]);
+wikipediaMap.set("PSE", ["EGY","JOR","CYP","ISR"]);
+wikipediaMap.set("PYF", ["KIR","COK","PCN"]);
 wikipediaMap.set("QAT", ["BHR","IRN","SAU","ARE"]);
-wikipediaMap.set("NOR", ["AUS"]);
 wikipediaMap.set("ROU", ["BGR","HUN","MDA","RUS","SRB","UKR"]);
-wikipediaMap.set("NZL", ["AUS"]);
 wikipediaMap.set("RUS", ["AZE","BLR","BGR","CHN","EST","FIN","GEO","JPN","KAZ","PRK","LVA","LTU","MNG","NOR","POL","ROU","SWE","TUR","UKR","USA","SJM"]);
 wikipediaMap.set("RWA", ["BDI","COD","TZA","UGA"]);
-wikipediaMap.set("BLM", ["ATG","NLD","KNA","AIA","FRA","SXM"]);
-wikipediaMap.set("SHN", []);
-wikipediaMap.set("KNA", ["ATG","NLD","VEN","MSR","BLM"]);
-wikipediaMap.set("LCA", ["BRB","FRA","VCT","VEN"]);
-wikipediaMap.set("FRA", ["NLD","AIA","BLM","SXM"]);
-wikipediaMap.set("SPM", ["CAN"]);
-wikipediaMap.set("VCT", ["BRB","LCA","TTO","VEN"]);
-wikipediaMap.set("WSM", ["TON","ASM","WLF"]);
-wikipediaMap.set("SMR", ["ITA"]);
-wikipediaMap.set("STP", ["GNQ","GAB","NGA"]);
 wikipediaMap.set("SAU", ["BHR","EGY","ERI","IRN","IRQ","JOR","KWT","OMN","QAT","SDN","ARE","YEM"]);
+wikipediaMap.set("SDN", ["CAF","TCD","EGY","ERI","ETH","LBY","SAU","SSD"]);
 wikipediaMap.set("SEN", ["CPV","GMB","GIN","GNB","MLI","MRT"]);
-wikipediaMap.set("SRB", ["BIH","BGR","HRV","HUN","MNE","MKD","ROU","XKX"]);
-wikipediaMap.set("SYC", ["COM","MDG","MUS","TZA"]);
-wikipediaMap.set("SLE", ["GIN","LBR"]);
 wikipediaMap.set("SGP", ["IDN","MYS"]);
-wikipediaMap.set("SXM", ["NLD","FRA","FRA"]);
+wikipediaMap.set("SHN", []);
+wikipediaMap.set("SJM", ["DNK","FIN","ISL","RUS","SWE","GRL"]);
+wikipediaMap.set("SJM", ["ISL","GRL"]);
+wikipediaMap.set("SJM", ["NOR","RUS","GRL"]);
+wikipediaMap.set("SLB", ["FJI","PNG","VUT","NCL"]);
+wikipediaMap.set("SLE", ["GIN","LBR"]);
+wikipediaMap.set("SLV", ["GTM","HND","NIC"]);
+wikipediaMap.set("SMR", ["ITA"]);
+wikipediaMap.set("SOM", ["DJI","ETH","KEN","YEM"]);
+wikipediaMap.set("SPM", ["CAN"]);
+wikipediaMap.set("SRB", ["BIH","BGR","HRV","HUN","MNE","MKD","ROU","XKX"]);
+wikipediaMap.set("SSD", ["CAF","COD","ETH","KEN","SDN","UGA"]);
+wikipediaMap.set("STP", ["GNQ","GAB","NGA"]);
+wikipediaMap.set("SUR", ["BRA","FRA","GUY"]);
 wikipediaMap.set("SVK", ["AUT","CZE","HUN","POL","UKR"]);
 wikipediaMap.set("SVN", ["AUT","HRV","ITA","HUN"]);
-wikipediaMap.set("SLB", ["FJI","PNG","VUT","NCL"]);
-wikipediaMap.set("SOM", ["DJI","ETH","KEN","YEM"]);
-wikipediaMap.set("ZAF", ["BWA","SWZ","LSO","MOZ","NAM","ZWE"]);
-wikipediaMap.set("SSD", ["CAF","COD","ETH","KEN","SDN","UGA"]);
-wikipediaMap.set("ESP", ["DZA","AND","FRA","ITA","MAR","PRT"]);
-wikipediaMap.set("LKA", ["IND"]);
-wikipediaMap.set("SDN", ["CAF","TCD","EGY","ERI","ETH","LBY","SAU","SSD"]);
-wikipediaMap.set("SUR", ["BRA","FRA","GUY"]);
-wikipediaMap.set("SJM", ["NOR","RUS","GRL"]);
 wikipediaMap.set("SWE", ["DNK","EST","FIN","DEU","LVA","LTU","NOR","POL","RUS"]);
-wikipediaMap.set("CHE", ["AUT","FRA","ITA","LIE","DEU"]);
+wikipediaMap.set("SWZ", ["MOZ","ZAF"]);
+wikipediaMap.set("SXM", ["BEL","DOM","DEU","KNA","GBR","VEN","AIA","FRA","FRA","VIR"]);
+wikipediaMap.set("SXM", ["NLD","FRA","FRA"]);
+wikipediaMap.set("SYC", ["COM","MDG","MUS","TZA"]);
 wikipediaMap.set("SYR", ["CYP","IRQ","ISR","JOR","LBN","TUR"]);
-wikipediaMap.set("TWN", ["BRN","CHN","IDN","JPN","MYS","PHL","VNM"]);
-wikipediaMap.set("TJK", ["AFG","CHN","KGZ","UZB"]);
-wikipediaMap.set("TZA", ["BDI","COM","COD","KEN","MWI","MOZ","RWA","SYC","UGA","ZMB"]);
-wikipediaMap.set("THA", ["MMR","KHM","IND","IDN","LAO","MYS","VNM"]);
+wikipediaMap.set("TCA", ["BHS","DOM","HTI"]);
+wikipediaMap.set("TCD", ["CMR","CAF","LBY","NER","NGA","SDN"]);
 wikipediaMap.set("TGO", ["BEN","BFA","GHA"]);
+wikipediaMap.set("THA", ["MMR","KHM","IND","IDN","LAO","MYS","VNM"]);
+wikipediaMap.set("TJK", ["AFG","CHN","KGZ","UZB"]);
+wikipediaMap.set("TKL", ["AUS","FJI","KIR","WSM","TON","ASM","PYF","NFK","WLF"]);
+wikipediaMap.set("TKL", ["DZA","MRT","MAR","ESP"]);
 wikipediaMap.set("TKL", ["KIR","WSM","ASM","COK","WLF"]);
+wikipediaMap.set("TKM", ["AFG","AZE","IRN","KAZ","UZB"]);
+wikipediaMap.set("TLS", ["AUS","IDN"]);
 wikipediaMap.set("TON", ["FJI","WSM","ASM","NIU","WLF"]);
 wikipediaMap.set("TTO", ["BRB","GRD","GUY","VCT","VEN"]);
 wikipediaMap.set("TUN", ["DZA","ITA","LBY"]);
 wikipediaMap.set("TUR", ["ARM","AZE","BGR","CYP","EGY","GEO","GRC","IRN","IRQ","RUS","SYR","UKR"]);
-wikipediaMap.set("TKM", ["AFG","AZE","IRN","KAZ","UZB"]);
-wikipediaMap.set("TCA", ["BHS","DOM","HTI"]);
 wikipediaMap.set("TUV", ["FJI","KIR","WLF"]);
+wikipediaMap.set("TWN", ["BRN","CHN","IDN","JPN","MYS","PHL","VNM"]);
+wikipediaMap.set("TZA", ["BDI","COM","COD","KEN","MWI","MOZ","RWA","SYC","UGA","ZMB"]);
 wikipediaMap.set("UGA", ["COD","KEN","RWA","SSD","TZA"]);
 wikipediaMap.set("UKR", ["BLR","BGR","HUN","MDA","POL","ROU","RUS","SVK","TUR"]);
-wikipediaMap.set("ARE", ["IRN","OMN","QAT","SAU"]);
-wikipediaMap.set("GBR", ["BEL","DNK","FRA","DEU","IRL","NLD","NOR","ESP","FRO","GGY","IMN","GBR","GBR","AIA","BMU","IOT","VGB","CYM","FLK","GGY","IMN","JEY","MSR","PCN","SHN"]);
-wikipediaMap.set("TCA", ["ATG","ARG","BHS","BEL","CUB","CYP","DNK","DOM","FRA","DEU","HTI","HND","IRL","JAM","MDV","NLD","NOR","KNA","ESP","VEN","FRO","PYF","PRI","BLM","FRA","VIR","USA","BHS","CAN","CUB","MEX","RUS","USA","ASM","GUM","MNP","PRI","VIR"]);
-wikipediaMap.set("VIR", ["NLD","VEN","AIA","VGB","PRI","URY","ARG","BRA"]);
+wikipediaMap.set("URY", ["ARG","BRA"]);
+wikipediaMap.set("USA", ["BHS","CAN","CUB","MEX","RUS","USA","ASM","GUM","MNP","PRI","VIR"]);
+//wikipediaMap.set("USA", ["USA"]);
+//wikipediaMap.set("USA", ["USA","KIR"]);
 wikipediaMap.set("UZB", ["AFG","KAZ","KGZ","TJK","TKM"]);
-wikipediaMap.set("VUT", ["FJI","SLB","NCL"]);
 wikipediaMap.set("VAT", ["ITA"]);
+wikipediaMap.set("VCT", ["BRB","LCA","TTO","VEN"]);
 wikipediaMap.set("VEN", ["BRB","BRA","COL","DMA","DOM","FRA","GRD","GUY","NLD","KNA","LCA","VCT","TTO","ABW","CUW","MSR","PRI","VIR"]);
+wikipediaMap.set("VGB", ["AIA","PRI","VIR"]);
+wikipediaMap.set("VIR", ["NLD","VEN","AIA","VGB","PRI"]);
 wikipediaMap.set("VNM", ["BRN","KHM","CHN","IDN","LAO","MYS","PHL","TWN","THA"]);
+wikipediaMap.set("VUT", ["FJI","SLB","NCL"]);
 wikipediaMap.set("WLF", ["FJI","WSM","TON","TUV"]);
-wikipediaMap.set("TKL", ["DZA","MRT","MAR","ESP"]);
+wikipediaMap.set("WSM", ["TON","ASM","WLF"]);
+wikipediaMap.set("XKX", ["ALB","MNE","MKD","SRB"]);
 wikipediaMap.set("YEM", ["DJI","ERI","OMN","SAU","SOM"]);
+wikipediaMap.set("ZAF", ["BWA","SWZ","LSO","MOZ","NAM","ZWE"]);
 wikipediaMap.set("ZMB", ["AGO","BWA","COD","MWI","MOZ","NAM","TZA","ZWE"]);
 wikipediaMap.set("ZWE", ["BWA","MOZ","ZAF","ZMB"]);
 

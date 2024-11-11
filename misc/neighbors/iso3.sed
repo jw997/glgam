@@ -230,7 +230,7 @@ sed -i 's/Montserrat/MSR/' neighbors.isoa3
 sed -i 's/Antigua and Barbuda/ATG/' neighbors.isoa3
 sed -i 's/Saint Kitts and Nevis/KNA/' neighbors.isoa3
 sed -i 's/United States Virgin Islands/VIR/' neighbors.isoa3
-sed -i 's/USA Virgin Islands/VIR/' neighbors.isoa
+sed -i 's/USA Virgin Islands/VIR/' neighbors.isoa3
 sed -i 's/Saint-Barthélemy/BLM/' neighbors.isoa3
 sed -i 's/Saint Barthélemy/BLM/' neighbors.isoa3
 sed -i 's/Anguilla/AIA/' neighbors.isoa3

@@ -1,4 +1,6 @@
-cp neighbors.txt neighbors.isoa3
+sed 's/flagicon/flag/ig' neighbors.wiki  | egrep  -o -e '\{flag\|[^}]*}'  -e '^\|[0-9]+'    | sed 's/{flag|//' | sed 's/}//' | sed 's/|//' > neighbors.txt
+#cp neighbors.txt neighbors.isoa3
+sed -e '23,28d;129,134d;145,161d;432,434d;622,637d;795,846d;1858,1865d;2286,2331d' neighbors.txt > neighbors.isoa3
 bash -x iso3.sed
 cp neighbors.isoa3 temp0
 sed  's/^.....*/ZZZ/' temp0 > temp1

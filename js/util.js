@@ -58,6 +58,11 @@ for (const element of countries.features) {
 //	}
 	// log country polygon info
 	//logPolygonInfo(element);
+	// see if we have neighbor info?
+	const n = getNeighbors(element.properties.ISO_A3_EH);
+	if (n == undefined) {
+		console.error("No neighbor data for ", element.properties.ISO_A3_EH);
+	}
 }
 
 // set the altitude and camera coords for each country
@@ -68,7 +73,7 @@ for (const element of countries.features) {
 	const bboxsize = getBboxSize(element);
 	const rad = getZoomForSize(bboxsize);
 
-	console.log('bbox area is', element.properties.NAME_LONG, bboxsize, rad);
+//	console.log('bbox area is', element.properties.NAME_LONG, bboxsize, rad);
 
 	const center = getBboxCenter(element);
 	const coords = Globe.getCoords(center[1], center[0], rad);  // lat, lng, altitude
@@ -96,6 +101,13 @@ for (const [key, value] of sortedCountryMap.entries()) {
 	// add to code set
 	setIsoCodes.add(value);
 }
+
+// compare neighbors and counts
+for (const [name, iso3] of sortedCountryMap.entries()) {
+	let n = getNeighbors(iso3) ?? [];
+	console.debug(name, "  ", n.length);
+}
+
 
 
 
@@ -138,7 +150,7 @@ function plotCountryGeometry(clist) {
 	const rad = getZoomForSize(bboxsize);
 	setRotateSpeedFromRadius(rad);
 
-	console.log('bbox area is', thisc.properties.NAME_LONG, bboxsize, rad);
+	//console.log('bbox area is', thisc.properties.NAME_LONG, bboxsize, rad);
 
 	const center = getBboxCenter(thisc);
 	const coords = Globe.getCoords(center[1], center[0], rad);  // lat, lng, altitude
@@ -153,7 +165,7 @@ function plotCountryGeometry(clist) {
 	const endTween = {lng: center[0], lat: center[1], altitude: rad};
 	fixStartLng(startTween, endTween);
 	const midTween = {lng: (startTween.lng+ endTween.lng)/2, lat:(endTween.lat + startTween.lat)/2, altitude: 4 + rad};
-	console.log('end+tween', endTween);
+	//console.log('end+tween', endTween);
 	const tweenCoords = startTween;
 
 	// Fly higher in the middle with chain?
@@ -192,7 +204,7 @@ function plotCountryGeometry(clist) {
 	enableRotate(false);  // disable user globe rotation while we animate the move
 	State.tweenOne.start();
 
-	console.log(thisc.properties.NAME_LONG, ' ', coords);
+//	console.log(thisc.properties.NAME_LONG, ' ', coords);
 
 	// All countries on list, we'll set the globe polygon data with these
 	const c = countries.features.filter(d => ( clist.includes(d.properties.ISO_A3_EH) || d.fake));
@@ -203,7 +215,7 @@ function plotCountryGeometry(clist) {
 			element.color = colorsHighway[State.lastColor];
 			State.lastColor = 1 + ((State.lastColor + 1) % (colorsHighway.length - 1)); // Save red for target
 
-			console.log(element.properties.NAME_LONG, ' ', element.color);
+			//console.log(element.properties.NAME_LONG, ' ', element.color);
 		}
 	}
 
@@ -256,7 +268,7 @@ State.countryList = [State.answer];
 
 function tour() {
 
-	console.log(" tour button disabled ", document.querySelector('#tourButton').disabled );
+//	console.log(" tour button disabled ", document.querySelector('#tourButton').disabled );
 
 	// 1 animation at a time
 	// once you arrive, not more waiting
@@ -273,7 +285,7 @@ function tour() {
 	let endCoords = []; // end coords for each tween
 	let tweenCoords = []; // the coord updated by each tween
 
-	console.log(State.countryList);
+//	console.log(State.countryList);
 
 	for(let i =0; i < State.countryList.length; i++) {
 		const country = countries.features.find(d => State.countryList[i] === d.properties.ISO_A3_EH);
