@@ -20,7 +20,7 @@ test('isjson', t => {
 
 	t.is( obj.type , "FeatureCollection","type if FeatureCollection");
 
-	t.is( obj.features.length , 237	, "expected 237 countries");
+	t.is( obj.features.length , 238	, "expected 238 countries");
 
 	const countries = obj;
 	// make sure each country has required props
@@ -50,8 +50,8 @@ test('isjson', t => {
 		
     }
 
-	t.is( setIso.size, 237, "expected 237 unique iso 3 codes")
-	t.is( setAdmin.size, 237, "expected 237 names")
+	t.is( setIso.size, 238, "expected 238 unique iso 3 codes")
+	t.is( setAdmin.size, 238, "expected 238 names")
 
   
   });

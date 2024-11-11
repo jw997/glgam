@@ -10,8 +10,12 @@ declare countries_to_move='["United States of America","Canada","Greenland","Ant
 
 jq '[ (.features[] |  select (.properties.ADMIN == "United States of America"  or .properties.ADMIN == "Canada"  or.properties.ADMIN == "Greenland"  or.properties.ADMIN == "Antarctica"  or .properties.ADMIN == "Russia") )]' pp_110.geojson > replacement.countries.json
 
+#update Somaliland to RSL
+jq ' (.features[] |  select (.properties.ADMIN == "Somaliland")).properties.ISO_A3_EH |= "RSL" ' pp_50.geojson >medium.rsl.geojson
 #update Kososvo to have ISO_A3_EH = 'XKX'
-jq ' (.features[] |  select (.properties.ADMIN == "Kosovo")).properties.ISO_A3_EH |= "XKX" ' pp_50.geojson >medium.ko.geojson
+jq ' (.features[] |  select (.properties.ADMIN == "Kosovo")).properties.ISO_A3_EH |= "XKX" ' medium.rsl.geojson >medium.ko.geojson
+
+
 
 # delete the countries from medium res that either are invalid -99 or that will be replaced 
 jq 'del  (.features[] |  select ( .properties.ISO_A3_EH == "-99" or .properties.ADMIN == "Ashmore and Cartier Islands" or .properties.ADMIN == "United States of America"  or .properties.ADMIN == "Canada"  or.properties.ADMIN == "Greenland"  or.properties.ADMIN == "Antarctica"  or .properties.ADMIN == "Russia"  or .properties.ADMIN == "Indian Ocean Territories"))  ' medium.ko.geojson >medium.removed.geojson
