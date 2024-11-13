@@ -302,7 +302,8 @@ wikipediaMap.set("ETH", ["DJI","ERI","RSL","KEN","SOM","SSD","SDN"]);
 wikipediaMap.set("FIN", ["EST","NOR","RUS","ALA","SWE"]);
 wikipediaMap.set("FJI", ["NZL","SLB","TON","TUV","VUT","NCL","WLF"]);
 wikipediaMap.set("FLK", ["ARG","SGS"]);
-wikipediaMap.set("FRA", ["AND","ATG","BRB","BEL","BRA","COM","DMA","DEU","ITA","LUX","MDG","MUS","LCA","ESP","CHE","SUR","GBR","VEN","ATF","GGY","JEY","MSR"]);
+
+wikipediaMap.set("FRA", ["AND","ATG","BRB","BEL","BRA","COM","DMA","DEU","ITA","LUX","MCO","MDG","MUS","LCA","ESP","CHE","SUR","GBR","VEN","ATF","GGY","JEY","MSR"]);
 wikipediaMap.set("FRO", ["ISL","NOR","GBR"]);
 wikipediaMap.set("FSM", ["MHL","PLW","PNG","GUM"]);
 wikipediaMap.set("GAB", ["CMR","COG","GNQ","STP"]);
@@ -362,7 +363,7 @@ wikipediaMap.set("LVA", ["EST","LTU","BLR","RUS"]);
 wikipediaMap.set("MAC", ["CHN","HKG"]);
 wikipediaMap.set("MAF", ["AIA","BLM","SXM"]);
 wikipediaMap.set("MAR", ["PRT","ESP","ESH","DZA"]);
-wikipediaMap.set("MCO", []);
+wikipediaMap.set("MCO", ["FRA"]);
 wikipediaMap.set("MDA", ["ROU","UKR"]);
 wikipediaMap.set("MDG", ["COM","FRA","MUS","MOZ","SYC","ATF"]);
 wikipediaMap.set("MDV", ["IND","LKA","IOT","MUS"]);
