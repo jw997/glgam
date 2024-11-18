@@ -26,7 +26,7 @@ class State {
 	static animatingMove = false; 
 };
 
-import {getJson,distanceBetweenCoords,fixStartLng,nextRand,seed, 
+import {getJson,distanceBetweenCoords,fixStartLng,getRandInt,getIndexFromDate, 
 	getHistory,addHistory,throwConfetti,findIndexOfCountry,logPolygonInfo,
 	getBoxForFeature, getBboxSize, getBboxCenter, getZoomForSize, getLabelForSize, getLabelOffsetForSize, getNeighbors
 } from "./utils_helper.js";
@@ -259,9 +259,8 @@ function plotCountryGeometry(clist) {
 // retrieve array of old guesses
 // history is a string of comma separated ISO A3 3 letter codes
 
-State.answerIndex = nextRand(sortedCountryMap.size);  // deterministic on todays date
+State.answerIndex = getIndexFromDate(sortedCountryMap.size);  // deterministic on todays date
 State.answer = Array.from(sortedCountryMap.values())[State.answerIndex];
-seed( Math.random());  // random for restart button
 
 // Let answer_name = Array.from(s.keys())[answer_index];
 State.countryList = [State.answer];
@@ -366,7 +365,7 @@ function tour() {
 function resetGameState() {
 	const history = getHistory();
 	do {
-		State.answerIndex = nextRand(sortedCountryMap.size); 
+		State.answerIndex = getRandInt(sortedCountryMap.size); 
 		State.answer = Array.from(sortedCountryMap.values())[State.answerIndex];
 	} while (history.includes(State.answer));
 
