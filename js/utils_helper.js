@@ -359,7 +359,7 @@ wikipediaMap.set("MLI", ["DZA","BFA","CIV","GIN","MRT","NER","SEN"]);
 wikipediaMap.set("MLT", ["ITA","LBY"]);
 wikipediaMap.set("MMR", ["BGD","CHN","IND","LAO","THA"]);
 wikipediaMap.set("MNE", ["BIH","HRV","ITA","SRB"]);
-wikipediaMap.set("MNG", ["RUS"]);
+wikipediaMap.set("MNG", ["CHN","RUS"]);
 wikipediaMap.set("MNP", ["GUM"]);
 wikipediaMap.set("MOZ", ["SWZ","MDG","MWI","TZA","ZMB","ZWE","ATF"]);
 wikipediaMap.set("MRT", ["CPV","MLI","SEN",,"ESH","DZA"]);
