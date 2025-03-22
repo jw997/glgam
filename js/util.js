@@ -1,6 +1,8 @@
 import {Tween, Easing} from 'tween';
 // Just used for zooming
-import {OrbitControls} from '//cdn.jsdelivr.net/npm/three/examples/jsm/controls/OrbitControls.js';
+// https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/controls/OrbitControls.js
+
+import {OrbitControls} from '../dependencies/three/0.174.0/OrbitControls.js';
 
 //  Initialize - one time
 //  reset game state
