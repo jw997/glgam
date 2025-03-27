@@ -134,6 +134,41 @@ for (const [name, iso3] of sortedCountryMap.entries()) {
 
 const colorsHighway = ['#a6001a', '#633517', '#e06000', '#ee9600', '#004d33', '#00477e'];
 
+function getNeighborsColors(code) {
+	const colorSet = new Set();
+
+	const neighborCodes = getNeighbors(code); 
+	if (neighborCodes) {
+		for (const nCode of neighborCodes) {
+			const index = findIndexOfCountry(countries, nCode);
+			const color = countries.features[index].color;
+			if (color) {
+				colorSet.add(color);
+			}
+		}
+	}
+	console.log( "neigh colors are ", colorSet)
+	return colorSet;
+}
+
+// cycle through the 6 highway colors.
+// only use red for the target country
+// try not to use a color that has been used for the neighbors
+function getNextColor(usedColorSet) {
+	var retval;
+	for (var t = 0 ; t < colorsHighway.length - 1; t++) {
+		retval = colorsHighway[State.lastColor];
+		State.lastColor = 1 + ((State.lastColor + 1) % (colorsHighway.length - 1)); // Save 0==red for target country
+
+		if (usedColorSet && usedColorSet.has( retval)) { // try not to color this country the same as a neighbor
+			continue; 
+		}
+		return retval;
+	}
+	return retval;  
+}
+
+
 function plotCountryGeometry(clist) {
 	// Const won = clist.clist.length > 1 && (clist[0] === clist[clist.length -1]);
 	const won = clist.lastIndexOf(clist[0]) > 0;
@@ -214,8 +249,17 @@ function plotCountryGeometry(clist) {
 	// Give each country a color
 	for (const element of c) {
 		if (undefined === element.color) {
-			element.color = colorsHighway[State.lastColor];
-			State.lastColor = 1 + ((State.lastColor + 1) % (colorsHighway.length - 1)); // Save red for target
+
+			const usedColorSet = getNeighborsColors(element.properties.ISO_A3_EH);
+
+			element.color = getNextColor(usedColorSet);
+
+			if (usedColorSet.has(element.color)) {
+				console.error("Failed to find a good coloring for ", element.properties.ISO_A3_EH);
+			}
+
+			//element.color = colorsHighway[State.lastColor];
+			//State.lastColor = 1 + ((State.lastColor + 1) % (colorsHighway.length - 1)); // Save red for target
 
 			//console.log(element.properties.NAME_LONG, ' ', element.color);
 		}
