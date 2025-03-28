@@ -362,7 +362,7 @@ wikipediaMap.set("MNE", ["BIH","HRV","ITA","SRB"]);
 wikipediaMap.set("MNG", ["CHN","RUS"]);
 wikipediaMap.set("MNP", ["GUM"]);
 wikipediaMap.set("MOZ", ["SWZ","MDG","MWI","TZA","ZMB","ZWE","ATF"]);
-wikipediaMap.set("MRT", ["CPV","MLI","SEN",,"ESH","DZA"]);
+wikipediaMap.set("MRT", ["CPV","MLI","SEN","ESH","DZA"]);
 wikipediaMap.set("MSR", ["ATG","FRA","KNA","VEN"]);
 wikipediaMap.set("MUS", ["FRA","MDG","SYC","ATF","MDV"]);
 wikipediaMap.set("MWI", ["MOZ","TZA","ZMB"]);
@@ -375,9 +375,9 @@ wikipediaMap.set("NGA", ["CMR","TCD","NER","STP"]);
 wikipediaMap.set("NIC", ["CRI","SLV","JAM","PAN","HND"]);
 wikipediaMap.set("NIU", ["TON","ASM","COK"]);
 wikipediaMap.set("NLD", ["BEL","DEU","KNA","GBR","VEN","AIA","CUW","BLM","MAF","SXM","VIR","ABW","CUW","NLD"]);
-wikipediaMap.set("NOR", []);
-wikipediaMap.set("NOR", ["AUS"]);
-wikipediaMap.set("NOR", ["DNK","FIN","RUS","SWE",/*"SJM"*/,"NOR",]);
+//wikipediaMap.set("NOR", []);
+//wikipediaMap.set("NOR", ["AUS"]);
+wikipediaMap.set("NOR", ["DNK","FIN","RUS","SWE","GBR"/*"SJM"*/,"NOR",]);
 wikipediaMap.set("NPL", ["IND","CHN"]);
 wikipediaMap.set("NRU", ["KIR"]);
 
@@ -480,6 +480,8 @@ function getNeighbors( code) {
 	}
 	return n;
 }
+
+
 
 export {getJson,distanceBetweenCoords,fixStartLng,getRandInt,getIndexFromDate,getHistory,	addHistory,throwConfetti,findIndexOfCountry,logPolygonInfo,
 		getBoxForFeature,getBboxSize, getBboxCenter, getZoomForSize, getLabelForSize, getLabelOffsetForSize, getNeighbors};
