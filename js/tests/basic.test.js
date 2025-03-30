@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import {getJson, distanceBetweenCoords, fixStartLng,getRandInt, getNeighbors} from "../utils_helper.js";
+import { getJson, distanceBetweenCoords, fixStartLng, getRandInt, getNeighbors } from "../utils_helper.js";
 
 const codesFromGeoJson = [
 	"ZWE",
@@ -242,44 +242,51 @@ const codesFromGeoJson = [
 	"BHR",
 	"MAC",
 
-	"SJM","TKL"
-   ];
-   
-/*
+	"SJM", "TKL"
+];
+
+
 test('getNeighbors', async t => {
 	// check each code is a legal 3 letter iso3166-3 code
 	// check symmetry
 	// check for countries with no neighbors
-    const arrayLength = codesFromGeoJson.length;
+	var errorCount = 0;
+
+	const arrayLength = codesFromGeoJson.length;
 	const codesSet = new Set(codesFromGeoJson);
 	const setSize = codesSet.size;
-	t.is (arrayLength, setSize);
+	t.is(arrayLength, setSize);
 
 	codesFromGeoJson.forEach(code => {
-		console.log("Code ", code);
+		//console.log("Code ", code);
 		const nabes = getNeighbors(code);
 		if (nabes == undefined) {
-			console.log( "No neighbors for code ", code);
+			console.log("No neighbors for code ", code);
+
+		} else {
+			//console.log("code ", code, " has neighbors ", nabes);
+			// check symmetry 
+			nabes.forEach(v => {
+
+				// make sure the neighbor is a valid code
+				t.true(codesSet.has(v), "Invalid neighbor code " + v);
+				//console.log(" trying symmetry for neighbor ", v);
+				const b = getNeighbors(v);
+
+				t.truthy(b, " no neighbors for ", v);
+				
+				if (b.indexOf(code) == -1) {
+					// make sure b contains code
+					const failmsg = "ERROR neighbor symmetery neihbors of " + v + " missing " + code;
+					console.log(failmsg);
+					errorCount++;
+				}
+			});
 		}
-		console.log ("code ", code, " has neighbors ", nabes);
-		// check symmetry 
-		nabes.forEach(v => {
-
-			// make sure the neighbor is a valid code
-			t.true(codesSet.has( v),"Invalid neighbor code " + v);
-			console.log( " trying symmetry for neighbor ", v);
-			const b = getNeighbors(v);
-
-			t.truthy(b, " no neighbors for ", v);
-			// make sure b contains code
-			const failmsg = " neighbor symmetery " + v + " " + b;
-		    if ( b.indexOf( code) == -1) {
-				console.log( failmsg);
-			} 
-		});
 	});
-  });
-*/
+	t.true(0 == errorCount, "symmetry errors found")
+});
+
 /*
 test('foo', t => {
   t.pass();  
@@ -292,17 +299,17 @@ test('bar', async t => {
 */
 test('fixStartLng', async t => {
 
-	let start={lat:1,lng:178}
-	fixStartLng( start, {lat:3,lng:-160})
+	let start = { lat: 1, lng: 178 }
+	fixStartLng(start, { lat: 3, lng: -160 })
 	t.is(start.lng, -182, "lng 0168 => 200");
 
-	fixStartLng( start, {lat:3,lng:0})
+	fixStartLng(start, { lat: 3, lng: 0 })
 	t.is(start.lng, 178, "lng -182 => 178");
 
-	let COK={lat:1, lng:-158};
-	let IND={ lat: 1, lng: 82 };
+	let COK = { lat: 1, lng: -158 };
+	let IND = { lat: 1, lng: 82 };
 
-	fixStartLng(COK,IND);
+	fixStartLng(COK, IND);
 	t.is(COK.lng, 202);
 });
 
@@ -310,20 +317,20 @@ test('getRandInt', async t => {
 
 	let count = new Map();
 	let M = 237;
-	for (let i=0;i<M;i++) {
-		count.set(i,0);
+	for (let i = 0; i < M; i++) {
+		count.set(i, 0);
 	}
-	let N=1000000;
-	for (let i=0; i < N; i++) {
+	let N = 1000000;
+	for (let i = 0; i < N; i++) {
 		let r = getRandInt(M);
-		t.assert( r>=0, "rand >= 0");
-		t.assert( r< M, "rand < M");
-		count.set(r, 1+count.get(r)); // up the count for the result
+		t.assert(r >= 0, "rand >= 0");
+		t.assert(r < M, "rand < M");
+		count.set(r, 1 + count.get(r)); // up the count for the result
 	}
-	for (let i=0;i<M;i++) {
+	for (let i = 0; i < M; i++) {
 		let c = count.get(i);
 		let failmsg = "random did not hit " + i;
-		t.assert( c > 1, failmsg);
+		t.assert(c > 1, failmsg);
 	}
 
 
@@ -333,16 +340,16 @@ test('getRandInt', async t => {
 
 test('distanceBetweenCoords', async t => {
 
-	let d = distanceBetweenCoords({lat:1,lng:10},{lat:3,lng:170})
+	let d = distanceBetweenCoords({ lat: 1, lng: 10 }, { lat: 3, lng: 170 })
 	t.is(d, 162, "162");
 
-	d = distanceBetweenCoords({lat:1,lng:-170},{lat:3,lng:170})
+	d = distanceBetweenCoords({ lat: 1, lng: -170 }, { lat: 3, lng: 170 })
 	t.is(d, 22, "22");
 
-	
 
-	let COK={lat:1, lng:-158};
-	let IND={ lat: 1, lng: 82 };
+
+	let COK = { lat: 1, lng: -158 };
+	let IND = { lat: 1, lng: 82 };
 
 	d = distanceBetweenCoords(IND, COK);
 	t.is(d, 120, "120");
@@ -356,5 +363,5 @@ test('distanceBetweenCoords', async t => {
 
 
 
-  
+
 
